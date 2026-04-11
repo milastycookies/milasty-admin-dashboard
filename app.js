@@ -230,12 +230,23 @@ function renderDispatch() {
 // =====================
 function renderAnalytics() {
   let total = 0
+  let daily = {}
 
   ordersData.forEach(order => {
     total += Number(order.total_amount)
+
+    const day = new Date(order.created_at).toDateString()
+    daily[day] = (daily[day] || 0) + Number(order.total_amount)
   })
 
-  return `<div class="card">💰 Total Revenue: ₹${total}</div>`
+  let chart = Object.entries(daily).map(([d,v]) =>
+    `<div>${d}: ₹${v}</div>`
+  ).join("")
+
+  return `
+    <div class="card">💰 Total: ₹${total}</div>
+    <div class="card">${chart}</div>
+  `
 }
 
 // =====================
