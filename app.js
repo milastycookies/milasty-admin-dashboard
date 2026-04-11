@@ -294,7 +294,7 @@ function getCustomersData() {
     else if (c.orders > 3 || c.spend > 1500) segment = "vip"
     else if (c.orders > 1) segment = "repeat"
 
-    if (daysInactive > 14) segment = "at_risk"
+    if (daysInactive > 60) segment = "at_risk"
 
     return {
       ...c,
