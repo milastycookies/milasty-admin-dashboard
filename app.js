@@ -95,6 +95,10 @@ window.updateStatus = async function(orderId, field) {
   if (!local[orderId]) local[orderId] = {}
   local[orderId][field] = newValue
 
+  // 🔥 UPDATE UI STATE IMMEDIATELY
+  if (!uiStateDB[orderId]) uiStateDB[orderId] = {}
+  uiStateDB[orderId][field] = newValue
+  
   saveLocalState(local)
   await syncToDB(orderId, field, newValue)
 
