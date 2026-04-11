@@ -419,7 +419,11 @@ function render() {
   if (currentTab === "orders") app.innerHTML = renderOrders()
   if (currentTab === "dispatch") app.innerHTML = renderDispatch()
   if (currentTab === "analytics") app.innerHTML = renderAnalytics()
-  if (currentTab === "customers") app.innerHTML = renderCustomers()
+  if (currentTab === "customers") {
+    const customers = getCustomersData()
+    window.cachedCustomers = customers
+    renderCustomers(customers)
+  }
 }
 
 // =====================
