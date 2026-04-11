@@ -156,6 +156,11 @@ function renderProduction() {
   }
 
   ordersData.forEach(order => {
+    const o = applyUIState(order)
+
+    // 🚨 Skip already prepared orders
+    if (o.production_status === "prepared") return
+    
     order.order_items.forEach(item => {
       const cookies = getCookies(item.product_name, item.quantity)
       const flavour = detectFlavour(item.product_name)
@@ -181,7 +186,7 @@ function renderProduction() {
     })
   })
 
-  let html = `<h3>Production Summary</h3>`
+  let html = `<h3>Production Pending</h3>`
 
   html += `
     <div class="card">
