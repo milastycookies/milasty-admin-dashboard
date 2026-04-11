@@ -376,17 +376,16 @@ function renderCustomers(customers) {
 
   let flags = JSON.parse(localStorage.getItem("customerFlags") || "{}")
 
-  container.innerHTML = customers.map(c => {
+  container.innerHTML = "<h3>Customers</h3>" + customers.map(c => {
     const phone = normalizePhone(c.phone)
-
     const userFlags = flags[phone] || []
 
     return `
       <div class="card">
         <h3>${c.name}</h3>
-        <p>${c.phone}</p>
+        <p>${phone}</p>
         <p>₹${c.spend}</p>
-        <p>${c.last_order}</p>
+        <p>Last: ${c.lastOrder}</p>
 
         <div style="margin-top:10px;">
           ${renderFlagButton("VIP", "vip", phone, userFlags)}
