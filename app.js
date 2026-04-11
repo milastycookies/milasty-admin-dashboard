@@ -321,6 +321,25 @@ window.sendWhatsApp = function(phone, type) {
 // =====================
 // CUSTOMERS UI
 // =====================
+function toggleFlag(phone, flag) {
+  let flags = JSON.parse(localStorage.getItem("customerFlags") || "{}")
+
+  if (!flags[phone]) {
+    flags[phone] = []
+  }
+
+  if (flags[phone].includes(flag)) {
+    flags[phone] = flags[phone].filter(f => f !== flag)
+  } else {
+    flags[phone].push(flag)
+  }
+
+  localStorage.setItem("customerFlags", JSON.stringify(flags))
+
+  renderCustomers(window.cachedCustomers)
+}
+
+
 function renderFlagButton(label, key, phone, userFlags) {
   const active = userFlags.includes(key)
 
