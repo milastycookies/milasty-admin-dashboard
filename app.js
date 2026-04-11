@@ -321,27 +321,37 @@ window.sendWhatsApp = function(phone, type) {
 // =====================
 // CUSTOMERS UI
 // =====================
-function renderCustomers() {
-  const customers = getCustomersData()
+function renderCustomers(customers) {
+  const container = document.getElementById("customersList")
 
-  let html = `<h3>Customers</h3>`
+  let flags = JSON.parse(localStorage.getItem("customerFlags") || "{}")
 
-  customers.forEach(c => {
-    html += `
+  container.innerHTML = customers.map(c => {
+    const phone = normalizePhone(c.phone)
+
+    const userFlags = flags[phone] || []
+
+    return `
       <div class="card">
-        <h4>${c.name}</h4>
+        <h3>${c.name}</h3>
         <p>${c.phone}</p>
-        <p>₹${c.spend}</p>
-        <p>${c.lastOrder}</p>
+        <p>₹${c.total}</p>
+        <p>${formatDate(c.last_order)}</p>
 
-        <button onclick="sendWhatsApp('${c.phone}','offer')">🎁</button>
-        <button onclick="sendWhatsApp('${c.phone}','reminder')">🔔</button>
-        <button onclick="sendWhatsApp('${c.phone}','thankyou')">🙏</button>
+        <div style="margin-top:10px;">
+          ${renderFlagButton("VIP", "vip", phone, userFlags)}
+          ${renderFlagButton("Repeat", "repeat", phone, userFlags)}
+          ${renderFlagButton("Promoter", "promoter", phone, userFlags)}
+        </div>
+
+        <div style="margin-top:10px;">
+          <a href="https://wa.me/${phone}" target="_blank">
+            <button>WhatsApp</button>
+          </a>
+        </div>
       </div>
     `
-  })
-
-  return html
+  }).join("")
 }
 
 // =====================
