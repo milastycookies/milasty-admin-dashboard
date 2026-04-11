@@ -469,6 +469,24 @@ async function loadOrders() {
 // =====================
 let channel
 
+function showToast(msg) {
+  const div = document.createElement("div")
+  div.innerText = msg
+  div.style = `
+    position:fixed;
+    top:20px;
+    right:20px;
+    background:black;
+    color:white;
+    padding:10px 20px;
+    border-radius:8px;
+    z-index:999;
+  `
+  document.body.appendChild(div)
+
+  setTimeout(() => div.remove(), 3000)
+}
+
 function subscribeToOrders() {
   if (channel) {
     supabase.removeChannel(channel)
@@ -480,7 +498,7 @@ function subscribeToOrders() {
       'postgres_changes',
       { event: 'INSERT', schema: 'public', table: 'orders' },
       () => {
-        alert("🚨 New Order!")
+        showToast("🚨 New Order Received!")
         loadOrders()
       }
     )
