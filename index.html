@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MILASTY Admin</title>
+
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#000000" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- TOP -->
+  <h2>MILASTY Dashboard</h2>
+
+  <!-- CONTENT -->
+  <div id="app"></div>
+
+  <!-- BOTTOM NAV -->
+  <div class="nav">
+    <button onclick="setTab('production')">🍪<br>Production</button>
+    <button onclick="setTab('orders')">📦<br>Orders</button>
+    <button onclick="setTab('dispatch')">🚚<br>Dispatch</button>
+    <button onclick="setTab('analytics')">📊<br>Analytics</button>
+    <button onclick="setTab('customers')">👥<br>Customers</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module" src="app.js"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+    }
+  </script>
+
+</body>
+</html>
