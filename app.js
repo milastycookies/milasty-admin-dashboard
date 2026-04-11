@@ -359,7 +359,7 @@ function renderFlagButton(label, key, phone, userFlags) {
 
 
 function renderCustomers(customers) {
-  const container = document.getElementById("customersList")
+  const container = document.getElementById("app")
 
   let flags = JSON.parse(localStorage.getItem("customerFlags") || "{}")
 
