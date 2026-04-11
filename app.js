@@ -358,6 +358,19 @@ function renderFlagButton(label, key, phone, userFlags) {
 }
 
 
+function normalizePhone(phone) {
+  if (!phone) return ""
+
+  phone = phone.toString().replace(/\D/g, "")
+  phone = phone.replace(/^0+/, "")
+
+  if (phone.length > 10 && phone.startsWith("91")) {
+    phone = phone.slice(-10)
+  }
+
+  return phone
+}
+
 function renderCustomers(customers) {
   const container = document.getElementById("app")
 
