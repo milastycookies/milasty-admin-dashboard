@@ -382,7 +382,12 @@ function renderCustomers(customers) {
 
     return `
       <div class="card">
-        <h3>${c.name}</h3>
+        <h3>
+          ${c.name}
+          ${c.segment === "super_vip" ? "👑" : ""}
+          ${c.segment === "vip" ? "⭐" : ""}
+          ${c.segment === "at_risk" ? "⚠️" : ""}
+        </h3>
         <p>${phone}</p>
         <p>₹${c.spend}</p>
         <p>Last: ${c.lastOrder}</p>
