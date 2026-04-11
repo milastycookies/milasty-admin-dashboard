@@ -412,7 +412,9 @@ function toggleFlag(phone, flag) {
 
   localStorage.setItem("customerFlags", JSON.stringify(flags))
 
-  renderCustomers(window.cachedCustomers)
+  // 🔥 FIX: always regenerate customers
+  const customers = getCustomersData()
+  renderCustomers(customers)
 }
 
 
@@ -426,6 +428,8 @@ function renderFlagButton(label, key, phone, userFlags) {
         margin-right:5px;
         background:${active ? 'black' : '#eee'};
         color:${active ? 'white' : 'black'};
+        transform:${active ? 'scale(1.05)' : 'scale(1)'};
+        transition: all 0.15s ease;
       "
     >
       ${label}
