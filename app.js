@@ -192,9 +192,9 @@ function renderProduction() {
   html += `<h4 style="margin-left:10px;">Flavour Breakdown</h4>`
 
   html += `
-    <div class="card">🍫 Chocolate: <b>${flavourMap.cocoa_ragi}</b></div>
-    <div class="card">🌾 Ragi: <b>${flavourMap.coconut_jowar}</b></div>
-    <div class="card">🌿 Jowar: <b>${flavourMap.cardamom_bajra}</b></div>
+    <div class="card">🍫 Cocoa Ragi: <b>${flavourMap.cocoa_ragi}</b></div>
+    <div class="card">🌾 Coconut Jowar: <b>${flavourMap.coconut_jowar}</b></div>
+    <div class="card">🌿 Cardamom Bajra: <b>${flavourMap.cardamom_bajra}</b></div>
   `
 
   return html
