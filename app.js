@@ -321,6 +321,24 @@ window.sendWhatsApp = function(phone, type) {
 // =====================
 // CUSTOMERS UI
 // =====================
+function renderFlagButton(label, key, phone, userFlags) {
+  const active = userFlags.includes(key)
+
+  return `
+    <button 
+      onclick="toggleFlag('${phone}', '${key}')"
+      style="
+        margin-right:5px;
+        background:${active ? 'black' : '#eee'};
+        color:${active ? 'white' : 'black'};
+      "
+    >
+      ${label}
+    </button>
+  `
+}
+
+
 function renderCustomers(customers) {
   const container = document.getElementById("customersList")
 
