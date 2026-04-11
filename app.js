@@ -120,30 +120,86 @@ function applyUIState(order) {
 // PRODUCTION
 // =====================
 function renderProduction() {
-  const summary = {}
-  const today = new Date().toDateString()
+  let totalCookies = 0
+
+  let flavourMap = {
+    cocoa_ragi: 0,
+    coconut_jowar: 0,
+    cardamom_bajra: 0
+  }
+
+  function getCookies(productName, qty) {
+    const name = productName.toLowerCase()
+
+    // 🎁 Special combos
+    if (name.includes("signature trio")) return 24 * qty
+    if (name.includes("elegant celebration")) return 30 * qty
+    if (name.includes("imperial wedding")) return 45 * qty
+
+    // 📦 Normal packs
+    if (name.includes("trial")) return 6 * qty
+    if (name.includes("regular")) return 8 * qty
+    if (name.includes("couple")) return 10 * qty
+    if (name.includes("family")) return 15 * qty
+
+    return 0
+  }
+
+  function detectFlavour(productName) {
+    const name = productName.toLowerCase()
+
+    if (name.includes("ragi")) return "cocoa_ragi"
+    if (name.includes("jowar")) return "coconut_jowar"
+    if (name.includes("bajra")) return "cardamom_bajra"
+
+    return "unknown"
+  }
 
   ordersData.forEach(order => {
-    if (new Date(order.created_at).toDateString() !== today) return
-
     order.order_items.forEach(item => {
-      summary[item.product_name] =
-        (summary[item.product_name] || 0) + item.quantity
+      const cookies = getCookies(item.product_name, item.quantity)
+      const flavour = detectFlavour(item.product_name)
+
+      totalCookies += cookies
+
+      // 🎁 Handle combo products (split equally into 3 flavours)
+      if (
+        item.product_name.toLowerCase().includes("signature trio") ||
+        item.product_name.toLowerCase().includes("elegant celebration") ||
+        item.product_name.toLowerCase().includes("imperial wedding")
+      ) {
+        const perFlavour = cookies / 3
+
+        flavourMap.cocoa_ragi += perFlavour
+        flavourMap.coconut_jowar += perFlavour
+        flavourMap.cardamom_bajra += perFlavour
+      } else {
+        if (flavourMap[flavour] !== undefined) {
+          flavourMap[flavour] += cookies
+        }
+      }
     })
   })
 
-  let html = "<h3>Today's Production</h3>"
+  let html = `<h3>Production Summary</h3>`
 
-  if (!Object.keys(summary).length) {
-    return "<div class='card'>No orders today</div>"
-  }
+  html += `
+    <div class="card">
+      🍪 Total Cookies Required: <b>${totalCookies}</b>
+    </div>
+  `
 
-  for (let item in summary) {
-    html += `<div class="card">${item}: <b>${summary[item]}</b></div>`
-  }
+  html += `<h4 style="margin-left:10px;">Flavour Breakdown</h4>`
+
+  html += `
+    <div class="card">🍫 Chocolate: <b>${flavourMap.cocoa_ragi}</b></div>
+    <div class="card">🌾 Ragi: <b>${flavourMap.coconut_jowar}</b></div>
+    <div class="card">🌿 Jowar: <b>${flavourMap.cardamom_bajra}</b></div>
+  `
 
   return html
 }
+
 
 // =====================
 // ORDERS
