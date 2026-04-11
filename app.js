@@ -372,8 +372,8 @@ function renderCustomers(customers) {
       <div class="card">
         <h3>${c.name}</h3>
         <p>${c.phone}</p>
-        <p>₹${c.total}</p>
-        <p>${formatDate(c.last_order)}</p>
+        <p>₹${c.spend}</p>
+        <p>${c.last_order}</p>
 
         <div style="margin-top:10px;">
           ${renderFlagButton("VIP", "vip", phone, userFlags)}
