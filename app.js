@@ -89,8 +89,14 @@ async function loadOrders() {
   } catch (err) {
     console.error(err)
 
-    document.getElementById("app").innerHTML = `
-      <div class="card">⚠️ Failed to load. Retrying...</div>
+    console.error(err)
+
+    // Only show error on first load
+    if (isFirstLoad) {
+      document.getElementById("app").innerHTML = `
+        <div class="card">⚠️ Failed to load. Retrying...</div>
+      `
+    }
     `
 
     setTimeout(loadOrders, 3000)
