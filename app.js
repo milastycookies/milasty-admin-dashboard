@@ -47,7 +47,10 @@ async function loadOrders() {
     render()
 
     const res = await fetch(`${API_BASE}/get-orders`, {
-      headers: { Authorization: AUTH_TOKEN }
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": AUTH_TOKEN
+      }
     })
 
     if (!res.ok) throw new Error("Fetch failed")
