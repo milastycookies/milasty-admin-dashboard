@@ -60,42 +60,55 @@
       margin-bottom: 10px;
       text-align: center;
     }
+
+    .loading {
+      color: #555;
+      font-size: 13px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
   </style>
 </head>
+
 <body>
 
   <div class="card">
     <h2>🍪 MILASTY Admin</h2>
 
     <div id="error" class="error"></div>
+    <div id="loading" class="loading"></div>
 
     <input id="email" type="email" placeholder="Email" />
     <input id="password" type="password" placeholder="Password" />
 
-    <button id="loginBtn" onclick="login()">Login</button>
+    <button id="loginBtn">Login</button>
   </div>
 
   <script>
     const API_BASE = "https://admin-dashboard-production-03ea.up.railway.app"
 
     const errorDiv = document.getElementById("error")
+    const loadingDiv = document.getElementById("loading")
     const btn = document.getElementById("loginBtn")
 
     // =====================
-    // AUTO REDIRECT IF LOGGED IN
+    // AUTO REDIRECT
     // =====================
-    if (localStorage.getItem("admin_logged_in")) {
+    if (localStorage.getItem("admin_token")) {
       window.location.href = "/"
     }
 
     // =====================
-    // LOGIN FUNCTION
+    // LOGIN HANDLER
     // =====================
+    btn.addEventListener("click", login)
+
     async function login() {
       const email = document.getElementById("email").value.trim()
       const password = document.getElementById("password").value.trim()
 
       errorDiv.innerText = ""
+      loadingDiv.innerText = ""
 
       if (!email || !password) {
         errorDiv.innerText = "Please enter email and password"
@@ -104,6 +117,7 @@
 
       btn.disabled = true
       btn.innerText = "Logging in..."
+      loadingDiv.innerText = "Connecting to server..."
 
       try {
         const res = await fetch(`${API_BASE}/login`, {
@@ -114,23 +128,35 @@
           body: JSON.stringify({ email, password })
         })
 
-        const data = await res.json()
+        // If backend not reachable
+        if (!res) {
+          throw new Error("No response from server")
+        }
 
-        if (!data.success) {
+        // Try parsing JSON safely
+        let data = {}
+        try {
+          data = await res.json()
+        } catch {
+          throw new Error("Invalid server response")
+        }
+
+        if (!res.ok || !data.success) {
           errorDiv.innerText = "Invalid credentials"
-          btn.disabled = false
-          btn.innerText = "Login"
           return
         }
 
         // ✅ SUCCESS
-        localStorage.setItem("admin_logged_in", "true")
+        localStorage.setItem("admin_token", "logged_in") // placeholder (JWT later)
         window.location.href = "/"
 
       } catch (err) {
-        errorDiv.innerText = "Server error. Try again."
+        console.error(err)
+        errorDiv.innerText = "Server error. Check backend or CORS."
+      } finally {
         btn.disabled = false
         btn.innerText = "Login"
+        loadingDiv.innerText = ""
       }
     }
   </script>
