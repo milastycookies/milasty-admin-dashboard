@@ -1,7 +1,7 @@
 // =====================
 // CONFIG
 // =====================
-const API_BASE = "https://admin-dashboard-production-03ea.up.railway.app"
+const API_BASE = "https://admin-dashboard-production-2711.up.railway.app"
 const AUTH_TOKEN = "milasty_ops_2026_secure"
 
 // =====================
