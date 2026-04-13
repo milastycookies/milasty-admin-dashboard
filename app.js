@@ -72,11 +72,14 @@ async function loadOrders() {
     const newHash = JSON.stringify({ newOrders, newUI })
     
     // Only update if data changed
-    if (newHash !== lastDataHash) {
-      ordersData = newOrders
-      uiStateDB = newUI
-      lastDataHash = newHash
+    ordersData = newOrders
+    uiStateDB = newUI
     
+    const newHash = JSON.stringify({ newOrders, newUI })
+    
+    // Always render on first load OR if data changed
+    if (isFirstLoad || newHash !== lastDataHash) {
+      lastDataHash = newHash
       render()
     }
     
