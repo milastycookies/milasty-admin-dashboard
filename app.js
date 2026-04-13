@@ -43,9 +43,11 @@ function saveLocalState(state) {
 // =====================
 async function loadOrders() {
   try {
-    isLoading = true
-    render()
-
+    if (isFirstLoad) {
+      isLoading = true
+      render()
+    }
+    
     const res = await fetch(`${API_BASE}/get-orders`, {
       headers: {
         "Content-Type": "application/json",
