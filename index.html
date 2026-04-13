@@ -4,18 +4,46 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MILASTY Admin</title>
 
+  <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
+  <!-- 🔐 AUTH CHECK -->
+  <script>
+    if (!localStorage.getItem("admin_logged_in")) {
+      window.location.href = "/login.html"
+    }
+  </script>
+
   <!-- TOP -->
-  <h2>MILASTY Dashboard</h2>
+  <div style="position:relative;">
+    <h2>MILASTY Dashboard</h2>
+
+    <!-- LOGOUT -->
+    <button onclick="logout()" style="
+      position:absolute;
+      right:10px;
+      top:10px;
+      padding:6px 10px;
+      border:none;
+      border-radius:6px;
+      background:black;
+      color:white;
+      font-size:12px;
+    ">
+      Logout
+    </button>
+  </div>
 
   <!-- CONTENT -->
-  <div id="app"></div>
+  <div id="app">Loading dashboard...</div>
 
   <!-- BOTTOM NAV -->
   <div class="nav">
@@ -26,12 +54,16 @@
     <button onclick="setTab('customers')">👥<br>Customers</button>
   </div>
 
+  <!-- LIBS -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- APP -->
   <script type="module" src="app.js"></script>
 
+  <!-- SERVICE WORKER -->
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
+      navigator.serviceWorker.register('./sw.js')
     }
   </script>
 
