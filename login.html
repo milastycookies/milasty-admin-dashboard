@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MILASTY Admin Login</title>
 
   <style>
@@ -62,7 +62,6 @@
     }
   </style>
 </head>
-
 <body>
 
   <div class="card">
@@ -77,19 +76,20 @@
   </div>
 
   <script>
-    const API_BASE = "https://YOUR_BACKEND_URL"  // 🔥 replace
+    const API_BASE = "https://admin-dashboard-production-03ea.up.railway.app"
+
     const errorDiv = document.getElementById("error")
     const btn = document.getElementById("loginBtn")
 
     // =====================
-    // AUTO REDIRECT
+    // AUTO REDIRECT IF LOGGED IN
     // =====================
     if (localStorage.getItem("admin_logged_in")) {
       window.location.href = "/"
     }
 
     // =====================
-    // LOGIN
+    // LOGIN FUNCTION
     // =====================
     async function login() {
       const email = document.getElementById("email").value.trim()
@@ -117,16 +117,18 @@
         const data = await res.json()
 
         if (!data.success) {
-          throw new Error("Invalid credentials")
+          errorDiv.innerText = "Invalid credentials"
+          btn.disabled = false
+          btn.innerText = "Login"
+          return
         }
 
-        // ✅ Save session
+        // ✅ SUCCESS
         localStorage.setItem("admin_logged_in", "true")
-
         window.location.href = "/"
 
       } catch (err) {
-        errorDiv.innerText = "Invalid credentials"
+        errorDiv.innerText = "Server error. Try again."
         btn.disabled = false
         btn.innerText = "Login"
       }
