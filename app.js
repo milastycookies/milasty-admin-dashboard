@@ -78,6 +78,7 @@ async function loadOrders() {
 // UPDATE STATUS
 // =====================
 window.updateStatus = async function (orderId, field) {
+  orderId = String(orderId)
   if (!window._updatingMap) window._updatingMap = {}
 
   if (window._updatingMap[orderId]) return
@@ -176,7 +177,7 @@ function renderProduction() {
     const o = applyUIState(order)
     if (o.production_status === "prepared") return
 
-    order.order_items.forEach(item => {
+    (order.order_items || []).forEach(item => {
       const name = item.product_name.toLowerCase()
       let cookies = 0
 
@@ -204,7 +205,7 @@ function renderOrders() {
   ordersData.forEach(order => {
     const o = applyUIState(order)
 
-    const items = order.order_items.map(i =>
+    const items = (order.order_items || []).map(i =>
       `${i.product_name} x${i.quantity}`
     ).join(", ")
 
@@ -212,7 +213,7 @@ function renderOrders() {
 
     html += `
       <div class="card">
-        <h4>${order.customers.name}</h4>
+        <h4>${order.customers?.name || "Unknown"}</h4>
         <p>${items}</p>
         <p>₹${order.total_amount}</p>
 
@@ -248,7 +249,7 @@ function renderDispatch() {
     if (o.production_status === "prepared" && o.delivery_status !== "delivered") {
       html += `
         <div class="card">
-          <h4>${order.customers.name}</h4>
+          <h4>${order.customers?.name || "Unknown"}</h4>
           <button onclick="updateStatus('${order.id}','delivery_status')">
             Dispatch
           </button>
@@ -279,7 +280,7 @@ function renderCustomers() {
   const map = {}
 
   ordersData.forEach(order => {
-    const phone = order.customers.phone
+    const phone = order.customers?.phone
     if (!phone) return
 
     if (!map[phone]) {
@@ -343,7 +344,9 @@ function render() {
 // =====================
 // AUTO REFRESH
 // =====================
-setInterval(loadOrders, 5000)
+setInterval(() => {
+  if (!document.hidden) loadOrders()
+}, 5000)
 
 // =====================
 // INIT
