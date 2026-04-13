@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MILASTY Admin Login</title>
 
   <style>
@@ -62,6 +62,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <div class="card">
@@ -75,30 +76,22 @@
     <button id="loginBtn" onclick="login()">Login</button>
   </div>
 
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
-    const supabase = createClient(
-      "https://qpdmonukpclrkakwwimb.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwZG1vbnVrcGNscmtha3d3aW1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzODM0NzMsImV4cCI6MjA4ODk1OTQ3M30.jwsmINxMw_i38a7F-0hwO62BGwoZHqfbmJlX-KMVpf4"
-    )
-
+  <script>
+    const API_BASE = "https://YOUR_BACKEND_URL"  // 🔥 replace
     const errorDiv = document.getElementById("error")
     const btn = document.getElementById("loginBtn")
 
     // =====================
-    // AUTO REDIRECT IF LOGGED IN
+    // AUTO REDIRECT
     // =====================
-    const { data: { session } } = await supabase.auth.getSession()
-
-    if (session) {
+    if (localStorage.getItem("admin_logged_in")) {
       window.location.href = "/"
     }
 
     // =====================
-    // LOGIN FUNCTION
+    // LOGIN
     // =====================
-    window.login = async function() {
+    async function login() {
       const email = document.getElementById("email").value.trim()
       const password = document.getElementById("password").value.trim()
 
@@ -112,20 +105,31 @@
       btn.disabled = true
       btn.innerText = "Logging in..."
 
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      })
+      try {
+        const res = await fetch(`${API_BASE}/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email, password })
+        })
 
-      if (error) {
+        const data = await res.json()
+
+        if (!data.success) {
+          throw new Error("Invalid credentials")
+        }
+
+        // ✅ Save session
+        localStorage.setItem("admin_logged_in", "true")
+
+        window.location.href = "/"
+
+      } catch (err) {
         errorDiv.innerText = "Invalid credentials"
         btn.disabled = false
         btn.innerText = "Login"
-        return
       }
-
-      // success
-      window.location.href = "/"
     }
   </script>
 
