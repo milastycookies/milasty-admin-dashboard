@@ -11,6 +11,9 @@ let ordersData = []
 let uiStateDB = {}
 let currentTab = "production"
 let isLoading = true
+let lastDataHash = ""
+let isFirstLoad = true
+let isFetching = false
 
 // =====================
 // AUTH CHECK
@@ -30,9 +33,6 @@ window.logout = function () {
 // =====================
 // LOCAL STATE
 // =====================
-let isFirstLoad = true
-let isFetching = false
-
 function getLocalState() {
   return JSON.parse(localStorage.getItem("milasty_ui")) || {}
 }
@@ -65,12 +65,23 @@ async function loadOrders() {
 
     const data = await res.json()
 
-    ordersData = data.orders || []
-    uiStateDB = data.uiState || {}
-
+    const newOrders = data.orders || []
+    const newUI = data.uiState || {}
+    
+    // Create hash to detect changes
+    const newHash = JSON.stringify({ newOrders, newUI })
+    
+    // Only update if data changed
+    if (newHash !== lastDataHash) {
+      ordersData = newOrders
+      uiStateDB = newUI
+      lastDataHash = newHash
+    
+      render()
+    }
+    
     isLoading = false
     isFirstLoad = false
-    render()
 
   } catch (err) {
     console.error(err)
