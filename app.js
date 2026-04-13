@@ -67,14 +67,13 @@ async function loadOrders() {
 
     const newOrders = data.orders || []
     const newUI = data.uiState || {}
-    
-    // Create hash to detect changes
-    const newHash = JSON.stringify({ newOrders, newUI })
+  
     
     // Only update if data changed
     ordersData = newOrders
     uiStateDB = newUI
-    
+
+    // Create hash to detect changes
     const newHash = JSON.stringify({ newOrders, newUI })
     
     // Always render on first load OR if data changed
