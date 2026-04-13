@@ -144,24 +144,24 @@ window.updateStatus = async function (orderId, field) {
 // =====================
 function applyUIState(order) {
   const local = getLocalState()
-  const db = uiStateDB[order.id] || {}
+  const db = uiStateDB[String(order.id)] || {}
 
   return {
     ...order,
     payment_status:
       db.payment_status ||
-      local[order.id]?.payment_status ||
+      local[String(order.id)]?.payment_status ||
       order.payment_status ||
       "pending",
 
     production_status:
       db.production_status ||
-      local[order.id]?.production_status ||
+      local[String(order.id)]?.production_status ||
       "not_prepared",
 
     delivery_status:
       db.delivery_status ||
-      local[order.id]?.delivery_status ||
+      local[String(order.id)]?.delivery_status ||
       "pending"
   }
 }
