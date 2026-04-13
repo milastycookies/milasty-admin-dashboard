@@ -352,6 +352,7 @@ window.setTab = function (tab) {
 // RENDER
 // =====================
 function render() {
+  if (document.hidden) return
   const app = document.getElementById("app")
 
   if (isLoading) {
