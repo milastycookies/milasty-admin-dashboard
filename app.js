@@ -87,8 +87,7 @@ async function loadOrders() {
 
   } catch (err) {
     console.error(err)
-
-    console.error(err)
+    
 
     // Only show error on first load
     if (isFirstLoad) {
