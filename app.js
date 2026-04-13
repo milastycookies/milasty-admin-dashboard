@@ -30,6 +30,9 @@ window.logout = function () {
 // =====================
 // LOCAL STATE
 // =====================
+let isFirstLoad = true
+let isFetching = false
+
 function getLocalState() {
   return JSON.parse(localStorage.getItem("milasty_ui")) || {}
 }
@@ -42,6 +45,9 @@ function saveLocalState(state) {
 // LOAD ORDERS
 // =====================
 async function loadOrders() {
+  if (isFetching) return
+  isFetching = true
+  
   try {
     if (isFirstLoad) {
       isLoading = true
@@ -63,6 +69,7 @@ async function loadOrders() {
     uiStateDB = data.uiState || {}
 
     isLoading = false
+    isFirstLoad = false
     render()
 
   } catch (err) {
@@ -73,6 +80,8 @@ async function loadOrders() {
     `
 
     setTimeout(loadOrders, 3000)
+  } finally {
+    isFetching = false
   }
 }
 
@@ -348,7 +357,7 @@ function render() {
 // =====================
 setInterval(() => {
   if (!document.hidden) loadOrders()
-}, 5000)
+}, 15000)
 
 // =====================
 // INIT
