@@ -97,7 +97,6 @@ async function loadOrders() {
         <div class="card">⚠️ Failed to load. Retrying...</div>
       `
     }
-    `
 
     setTimeout(loadOrders, 3000)
   } finally {
