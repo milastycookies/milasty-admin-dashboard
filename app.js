@@ -1,7 +1,7 @@
 // =====================
 // CONFIG
 // =====================
-const API_BASE = "https://admin-dashboard-production-03ea.up.railway.app"   // 🔥 CHANGE THIS
+const API_BASE = "https://admin-dashboard-production-03ea.up.railway.app"
 const AUTH_TOKEN = "milasty_ops_2026_secure"
 
 // =====================
@@ -10,14 +10,13 @@ const AUTH_TOKEN = "milasty_ops_2026_secure"
 let ordersData = []
 let uiStateDB = {}
 let currentTab = "production"
+let isLoading = true
 
 // =====================
-// AUTH CHECK (FRONTEND BASIC)
+// AUTH CHECK
 // =====================
 if (!localStorage.getItem("admin_logged_in")) {
-  if (!window.location.pathname.includes("login.html")) {
-    window.location.href = "/login.html"
-  }
+  window.location.href = "/login.html"
 }
 
 // =====================
@@ -40,10 +39,49 @@ function saveLocalState(state) {
 }
 
 // =====================
-// UPDATE STATUS (API)
+// LOAD ORDERS
+// =====================
+async function loadOrders() {
+  try {
+    isLoading = true
+    render()
+
+    const res = await fetch(`${API_BASE}/get-orders`, {
+      headers: { Authorization: AUTH_TOKEN }
+    })
+
+    if (!res.ok) throw new Error("Fetch failed")
+
+    const data = await res.json()
+
+    ordersData = data.orders || []
+    uiStateDB = data.uiState || {}
+
+    isLoading = false
+    render()
+
+  } catch (err) {
+    console.error(err)
+
+    document.getElementById("app").innerHTML = `
+      <div class="card">⚠️ Failed to load. Retrying...</div>
+    `
+
+    setTimeout(loadOrders, 3000)
+  }
+}
+
+// =====================
+// UPDATE STATUS
 // =====================
 window.updateStatus = async function (orderId, field) {
+  if (!window._updatingMap) window._updatingMap = {}
+
+  if (window._updatingMap[orderId]) return
+  window._updatingMap[orderId] = true
+
   const local = getLocalState()
+
   const current =
     uiStateDB[orderId]?.[field] ||
     local[orderId]?.[field]
@@ -64,6 +102,7 @@ window.updateStatus = async function (orderId, field) {
     else newValue = "pending"
   }
 
+  // Instant UI update
   if (!local[orderId]) local[orderId] = {}
   local[orderId][field] = newValue
 
@@ -73,23 +112,32 @@ window.updateStatus = async function (orderId, field) {
   saveLocalState(local)
   render()
 
-  // 🔥 API CALL
-  await fetch(`${API_BASE}/update-order`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": AUTH_TOKEN
-    },
-    body: JSON.stringify({
-      id: orderId,
-      field,
-      value: newValue
+  try {
+    const res = await fetch(`${API_BASE}/update-order`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": AUTH_TOKEN
+      },
+      body: JSON.stringify({
+        id: orderId,
+        field,
+        value: newValue
+      })
     })
-  })
+
+    if (!res.ok) throw new Error("Update failed")
+
+  } catch (err) {
+    alert("❌ Update failed. Syncing...")
+    loadOrders()
+  }
+
+  window._updatingMap[orderId] = false
 }
 
 // =====================
-// MERGE STATE
+// APPLY STATE
 // =====================
 function applyUIState(order) {
   const local = getLocalState()
@@ -97,31 +145,21 @@ function applyUIState(order) {
 
   return {
     ...order,
-    payment_status: db.payment_status || local[order.id]?.payment_status || order.payment_status || "pending",
-    production_status: db.production_status || local[order.id]?.production_status || "not_prepared",
-    delivery_status: db.delivery_status || local[order.id]?.delivery_status || "pending"
-  }
-}
+    payment_status:
+      db.payment_status ||
+      local[order.id]?.payment_status ||
+      order.payment_status ||
+      "pending",
 
-// =====================
-// LOAD ORDERS (API)
-// =====================
-async function loadOrders() {
-  try {
-    const res = await fetch(`${API_BASE}/get-orders`, {
-      headers: {
-        "Authorization": AUTH_TOKEN
-      }
-    })
+    production_status:
+      db.production_status ||
+      local[order.id]?.production_status ||
+      "not_prepared",
 
-    const data = await res.json()
-
-    ordersData = data.orders || []
-    uiStateDB = data.uiState || {}
-
-    render()
-  } catch (err) {
-    console.error("Error loading orders", err)
+    delivery_status:
+      db.delivery_status ||
+      local[order.id]?.delivery_status ||
+      "pending"
   }
 }
 
@@ -131,71 +169,26 @@ async function loadOrders() {
 function renderProduction() {
   let totalCookies = 0
 
-  let flavourMap = {
-    cocoa_ragi: 0,
-    coconut_jowar: 0,
-    cardamom_bajra: 0
-  }
-
-  function getCookies(productName, qty) {
-    const name = productName.toLowerCase()
-
-    if (name.includes("signature trio")) return 24 * qty
-    if (name.includes("elegant celebration")) return 30 * qty
-    if (name.includes("imperial wedding")) return 45 * qty
-
-    if (name.includes("trial")) return 6 * qty
-    if (name.includes("regular")) return 8 * qty
-    if (name.includes("couple")) return 10 * qty
-    if (name.includes("family")) return 15 * qty
-
-    return 0
-  }
-
-  function detectFlavour(productName) {
-    const name = productName.toLowerCase()
-
-    if (name.includes("ragi")) return "cocoa_ragi"
-    if (name.includes("jowar")) return "coconut_jowar"
-    if (name.includes("bajra")) return "cardamom_bajra"
-
-    return "unknown"
-  }
-
   ordersData.forEach(order => {
     const o = applyUIState(order)
-
     if (o.production_status === "prepared") return
 
     order.order_items.forEach(item => {
-      const cookies = getCookies(item.product_name, item.quantity)
-      const flavour = detectFlavour(item.product_name)
+      const name = item.product_name.toLowerCase()
+      let cookies = 0
 
-      totalCookies += cookies
+      if (name.includes("trial")) cookies = 6
+      if (name.includes("regular")) cookies = 8
+      if (name.includes("couple")) cookies = 10
+      if (name.includes("family")) cookies = 15
 
-      if (
-        item.product_name.toLowerCase().includes("signature trio") ||
-        item.product_name.toLowerCase().includes("elegant celebration") ||
-        item.product_name.toLowerCase().includes("imperial wedding")
-      ) {
-        const perFlavour = cookies / 3
-        flavourMap.cocoa_ragi += perFlavour
-        flavourMap.coconut_jowar += perFlavour
-        flavourMap.cardamom_bajra += perFlavour
-      } else {
-        if (flavourMap[flavour] !== undefined) {
-          flavourMap[flavour] += cookies
-        }
-      }
+      totalCookies += cookies * item.quantity
     })
   })
 
   return `
-    <h3>Production Pending</h3>
+    <h3>Production</h3>
     <div class="card">🍪 Total Cookies: <b>${totalCookies}</b></div>
-    <div class="card">🍫 Cocoa Ragi: <b>${flavourMap.cocoa_ragi}</b></div>
-    <div class="card">🌾 Coconut Jowar: <b>${flavourMap.coconut_jowar}</b></div>
-    <div class="card">🌿 Cardamom Bajra: <b>${flavourMap.cardamom_bajra}</b></div>
   `
 }
 
@@ -212,6 +205,8 @@ function renderOrders() {
       `${i.product_name} x${i.quantity}`
     ).join(", ")
 
+    const isUpdating = window._updatingMap?.[order.id]
+
     html += `
       <div class="card">
         <h4>${order.customers.name}</h4>
@@ -219,20 +214,18 @@ function renderOrders() {
         <p>₹${order.total_amount}</p>
 
         <p style="color:${o.payment_status === 'complete' ? 'green' : 'red'}">
-          💰 ${o.payment_status === 'complete' ? 'Paid' : 'Pending'}
+          💰 ${o.payment_status}
         </p>
 
         <p style="color:${o.production_status === 'prepared' ? 'green' : 'red'}">
-          🍪 ${o.production_status === 'prepared' ? 'Prepared' : 'Not Prepared'}
+          🍪 ${o.production_status}
         </p>
 
-        <p>
-          🚚 ${o.delivery_status}
-        </p>
+        <p>🚚 ${o.delivery_status}</p>
 
-        <button onclick="updateStatus('${order.id}','payment_status')">💰</button>
-        <button onclick="updateStatus('${order.id}','production_status')">🍪</button>
-        <button onclick="updateStatus('${order.id}','delivery_status')">🚚</button>
+        <button ${isUpdating ? "disabled" : ""} onclick="updateStatus('${order.id}','payment_status')">💰</button>
+        <button ${isUpdating ? "disabled" : ""} onclick="updateStatus('${order.id}','production_status')">🍪</button>
+        <button ${isUpdating ? "disabled" : ""} onclick="updateStatus('${order.id}','delivery_status')">🚚</button>
       </div>
     `
   })
@@ -244,27 +237,22 @@ function renderOrders() {
 // DISPATCH
 // =====================
 function renderDispatch() {
-  let html = "<h3>Ready to Dispatch</h3>"
-  let count = 0
+  let html = "<h3>Dispatch</h3>"
 
   ordersData.forEach(order => {
     const o = applyUIState(order)
 
     if (o.production_status === "prepared" && o.delivery_status !== "delivered") {
-      count++
-
       html += `
         <div class="card">
           <h4>${order.customers.name}</h4>
           <button onclick="updateStatus('${order.id}','delivery_status')">
-            ${o.delivery_status === "pending" ? "Dispatch" : "Delivered"}
+            Dispatch
           </button>
         </div>
       `
     }
   })
-
-  if (!count) return "<div class='card'>No orders ready</div>"
 
   return html
 }
@@ -274,12 +262,48 @@ function renderDispatch() {
 // =====================
 function renderAnalytics() {
   let total = 0
-
-  ordersData.forEach(order => {
-    total += Number(order.total_amount)
-  })
+  ordersData.forEach(o => total += Number(o.total_amount))
 
   return `<div class="card">💰 Total: ₹${total}</div>`
+}
+
+// =====================
+// CUSTOMERS
+// =====================
+function renderCustomers() {
+  let html = "<h3>Customers</h3>"
+
+  const map = {}
+
+  ordersData.forEach(order => {
+    const phone = order.customers.phone
+    if (!phone) return
+
+    if (!map[phone]) {
+      map[phone] = {
+        name: order.customers.name,
+        phone,
+        orders: 0,
+        spend: 0
+      }
+    }
+
+    map[phone].orders++
+    map[phone].spend += Number(order.total_amount)
+  })
+
+  Object.values(map).forEach(c => {
+    html += `
+      <div class="card">
+        <h4>${c.name}</h4>
+        <p>${c.phone}</p>
+        <p>Orders: ${c.orders}</p>
+        <p>₹${c.spend}</p>
+      </div>
+    `
+  })
+
+  return html
 }
 
 // =====================
@@ -296,6 +320,11 @@ window.setTab = function (tab) {
 function render() {
   const app = document.getElementById("app")
 
+  if (isLoading) {
+    app.innerHTML = "<div class='card'>Loading...</div>"
+    return
+  }
+
   if (!ordersData.length) {
     app.innerHTML = "<div class='card'>No orders</div>"
     return
@@ -305,10 +334,11 @@ function render() {
   if (currentTab === "orders") app.innerHTML = renderOrders()
   if (currentTab === "dispatch") app.innerHTML = renderDispatch()
   if (currentTab === "analytics") app.innerHTML = renderAnalytics()
+  if (currentTab === "customers") app.innerHTML = renderCustomers()
 }
 
 // =====================
-// AUTO REFRESH (REAL-TIME)
+// AUTO REFRESH
 // =====================
 setInterval(loadOrders, 5000)
 
