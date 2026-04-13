@@ -178,7 +178,7 @@ function renderProduction() {
     if (o.production_status === "prepared") return
 
     (order.order_items || []).forEach(item => {
-      const name = item.product_name.toLowerCase()
+      const name = (item.product_name || "").toLowerCase()
       let cookies = 0
 
       if (name.includes("trial")) cookies = 6
@@ -209,7 +209,7 @@ function renderOrders() {
       `${i.product_name} x${i.quantity}`
     ).join(", ")
 
-    const isUpdating = window._updatingMap?.[order.id]
+    const isUpdating = window._updatingMap?.[String(order.id)]
 
     html += `
       <div class="card">
@@ -285,7 +285,7 @@ function renderCustomers() {
 
     if (!map[phone]) {
       map[phone] = {
-        name: order.customers.name,
+        name: order.customers?.name || "Unknown",
         phone,
         orders: 0,
         spend: 0
@@ -329,7 +329,7 @@ function render() {
     return
   }
 
-  if (!ordersData.length) {
+  if (!ordersData.length && !isLoading) {
     app.innerHTML = "<div class='card'>No orders</div>"
     return
   }
