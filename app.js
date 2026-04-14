@@ -115,7 +115,6 @@ window.updateStatus = async function (orderId, field) {
 
   const key = `${orderId}_${field}`
   if (window._updatingMap[key]) return
-  const key = `${orderId}_${field}`
   window._updatingMap[key] = true
 
   const local = getLocalState()
