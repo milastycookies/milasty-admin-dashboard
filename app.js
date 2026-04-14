@@ -585,9 +585,6 @@ function render() {
   if (currentTab === "orders") newHTML = renderOrders()
   if (currentTab === "dispatch") newHTML = renderDispatch()
   if (currentTab === "analytics") newHTML = renderAnalytics()
-  if (currentTab === "analytics") {
-    setTimeout(renderCharts, 100)
-  }
   if (currentTab === "customers") newHTML = renderCustomers()
 
   // fallback
@@ -600,6 +597,11 @@ function render() {
     app.innerHTML = newHTML
     lastRenderedHTML = newHTML
     lastRenderedTab = currentTab
+  
+    // ✅ render charts AFTER DOM update
+    if (currentTab === "analytics") {
+      setTimeout(renderCharts, 50)
+    }
   }
 }
 
