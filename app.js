@@ -262,9 +262,9 @@ function renderOrders() {
 
         <p>🚚 ${o.delivery_status}</p>
 
-        <button ${isUpdating ? "disabled" : ""} onclick="updateStatus('${order.id}','payment_status')">💰</button>
-        <button ${isUpdating ? "disabled" : ""} onclick="updateStatus('${order.id}','production_status')">🍪</button>
-        <button ${isUpdating ? "disabled" : ""} onclick="updateStatus('${order.id}','delivery_status')">🚚</button>
+        <button ${isUpdatingPayment ? "disabled" : ""} onclick="updateStatus('${order.id}','payment_status')">💰 Payment Status</button>
+        <button ${isUpdatingProduction ? "disabled" : ""} onclick="updateStatus('${order.id}','production_status')">🍪 Production Status</button>
+        <button ${isUpdatingDelivery ? "disabled" : ""} onclick="updateStatus('${order.id}','delivery_status')">🚚 Shipment Status</button>
       </div>
     `
   })
