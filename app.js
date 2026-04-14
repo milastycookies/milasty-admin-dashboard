@@ -381,30 +381,20 @@ function render() {
     return
   }
 
-  // ❌ REMOVE empty block completely
-  
   let newHTML = ""
-  
+
   if (currentTab === "production") newHTML = renderProduction()
   if (currentTab === "orders") newHTML = renderOrders()
   if (currentTab === "dispatch") newHTML = renderDispatch()
   if (currentTab === "analytics") newHTML = renderAnalytics()
   if (currentTab === "customers") newHTML = renderCustomers()
-  
-  // fallback if nothing
+
+  // fallback
   if (!newHTML) {
     newHTML = "<div class='card'>No data available</div>"
   }
 
-  let newHTML = ""
-
-  if (currentTab === "production") newHTML = renderProduction()
-  if (currentTab === "orders") newHTML = renderOrders()
-  if (currentTab === "dispatch") newHTML = renderDispatch()
-  if (currentTab === "analytics") newHTML = renderAnalytics()
-  if (currentTab === "customers") newHTML = renderCustomers()
-
-  // 🔥 ONLY update DOM if changed
+  // update DOM only if changed
   if (newHTML !== lastRenderedHTML || currentTab !== lastRenderedTab) {
     app.innerHTML = newHTML
     lastRenderedHTML = newHTML
