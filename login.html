@@ -94,9 +94,14 @@
     // =====================
     // AUTO REDIRECT
     // =====================
-    if (localStorage.getItem("admin_token")) {
-      window.location.href = "/"
-    }
+    // Prevent flicker redirect
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        if (localStorage.getItem("admin_token")) {
+          window.location.replace("/")
+        }
+      }, 100)
+    })
 
     // =====================
     // LOGIN HANDLER
