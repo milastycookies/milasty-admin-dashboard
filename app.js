@@ -444,9 +444,10 @@ function renderCharts() {
   })
 
   // destroy previous charts (important)
-  Chart.helpers.each(Chart.instances, function(instance){
-    instance.destroy()
-  })
+  if (window._charts && window._charts.length) {
+    window._charts.forEach(chart => chart.destroy())
+  }
+  window._charts = []
 
   // MONTHLY
   new Chart(document.getElementById("monthlyChart"), {
