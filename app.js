@@ -450,53 +450,61 @@ function renderCharts() {
   window._charts = []
 
   // MONTHLY
-  new Chart(document.getElementById("monthlyChart"), {
-    type: "bar",
-    data: {
-      labels: Object.keys(monthly),
-      datasets: [{
-        label: "₹ Sales",
-        data: Object.values(monthly)
-      }]
-    }
-  })
+  window._charts.push(
+    new Chart(document.getElementById("monthlyChart"), {
+      type: "bar",
+      data: {
+        labels: Object.keys(monthly),
+        datasets: [{
+          label: "₹ Sales",
+          data: Object.values(monthly)
+        }]
+      }
+    })
+  )
 
   // REVENUE LINE
-  new Chart(document.getElementById("revenueChart"), {
-    type: "line",
-    data: {
-      labels: Object.keys(dailyRevenue),
-      datasets: [{
-        label: "Revenue",
-        data: Object.values(dailyRevenue),
-        tension: 0.3
-      }]
-    }
-  })
+  window._charts.push(
+    new Chart(document.getElementById("revenueChart"), {
+      type: "line",
+      data: {
+        labels: Object.keys(dailyRevenue),
+        datasets: [{
+          label: "Revenue",
+          data: Object.values(dailyRevenue),
+          tension: 0.3
+        }]
+      }
+    })
+  )
 
   // WEEKLY
-  new Chart(document.getElementById("weeklyChart"), {
-    type: "bar",
-    data: {
-      labels: Object.keys(weekly),
-      datasets: [{
-        label: "Weekly",
-        data: Object.values(weekly)
-      }]
-    }
-  })
+  window._charts.push(
+    new Chart(document.getElementById("weeklyChart"), {
+      type: "bar",
+      data: {
+        labels: Object.keys(weekly),
+        datasets: [{
+          label: "Weekly",
+          data: Object.values(weekly)
+        }]
+      }
+    })
+  )
 
   // SKU
-  new Chart(document.getElementById("skuChart"), {
-    type: "bar",
-    data: {
-      labels: Object.keys(skuMap),
-      datasets: [{
-        label: "Units Sold",
-        data: Object.values(skuMap)
-      }]
-    }
-  })
+  window._charts.push(
+    new Chart(document.getElementById("skuChart"), {
+      type: "bar",
+      data: {
+        labels: Object.keys(skuMap),
+        datasets: [{
+          label: "Units Sold",
+          data: Object.values(skuMap)
+        }]
+      }
+    })
+  )
 }
 
 // =====================
