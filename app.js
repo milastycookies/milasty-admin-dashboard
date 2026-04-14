@@ -89,15 +89,16 @@ async function loadOrders() {
 
   } catch (err) {
     console.error(err)
-    
-
-    // Only show error on first load
+  
+    isLoading = false   // 🔥 VERY IMPORTANT
+    render()
+  
     if (isFirstLoad) {
       document.getElementById("app").innerHTML = `
         <div class="card">⚠️ Failed to load. Retrying...</div>
       `
     }
-
+  
     setTimeout(loadOrders, 3000)
   } finally {
     isFetching = false
