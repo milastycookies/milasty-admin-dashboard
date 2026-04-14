@@ -14,6 +14,8 @@ let isLoading = true
 let lastDataHash = ""
 let isFirstLoad = true
 let isFetching = false
+let lastRenderedTab = ""
+let lastRenderedHTML = ""
 
 // =====================
 // AUTH CHECK
