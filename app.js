@@ -450,33 +450,29 @@ function renderCharts() {
   window._charts = []
 
   // MONTHLY
-  const monthOrder = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
-  
-  const sortedMonths = monthOrder.filter(m => monthly[m])
+  const sortedMonths = Object.keys(monthly).sort()
   const sortedMonthlyValues = sortedMonths.map(m => monthly[m])
   
   window._charts.push(
     new Chart(document.getElementById("monthlyChart"), {
       type: "bar",
       data: {
-        labels: sortedMonths,
+        labels: sortedMonths.map(m => {
+          const d = new Date(m + "-01")
+          return d.toLocaleDateString("en-IN", {
+            month: "short",
+            year: "2-digit"
+          })
+        }),
         datasets: [{
           label: "₹ Sales",
           data: sortedMonthlyValues
         }]
-      },
-      options: {
-        scales: {
-          x: {
-            ticks: {
-              maxTicksLimit: 6
-            }
-          }
-        }
       }
     })
   )
 
+  
   // REVENUE LINE
   const sortedDates = Object.keys(dailyRevenue).sort()
   const sortedRevenue = sortedDates.map(d => dailyRevenue[d])
