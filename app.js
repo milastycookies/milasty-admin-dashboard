@@ -242,60 +242,40 @@ function renderOrders() {
       `${i.product_name} x${i.quantity}`
     ).join(", ")
 
-    const isUpdatingPayment = window._updatingMap?.[`${order.id}_payment_status`]
-    const isUpdatingProduction = window._updatingMap?.[`${order.id}_production_status`]
-    const isUpdatingDelivery = window._updatingMap?.[`${order.id}_delivery_status`]
+    // ✅ MOVE LOGIC HERE (OUTSIDE HTML)
+    const paymentClass =
+      o.payment_status === "complete" ? "btn-paid" : "btn-pending"
 
+    const productionClass =
+      o.production_status === "prepared" ? "btn-prepared" : "btn-not-prepared"
+
+    let deliveryClass = "btn-pending"
+    if (o.delivery_status === "dispatched") deliveryClass = "btn-dispatched"
+    if (o.delivery_status === "delivered") deliveryClass = "btn-delivered"
+
+    // ✅ ONLY HTML BELOW
     html += `
       <div class="card">
         <h4>${order.customers?.name || "Unknown"}</h4>
         <p>${items}</p>
         <p>₹${order.total_amount}</p>
 
-        <p style="color:${o.payment_status === 'complete' ? 'green' : 'red'}">
-          💰 ${o.payment_status}
-        </p>
+        <div style="margin-top:10px;">
+          <button class="status-btn ${paymentClass}"
+            onclick="updateStatus('${order.id}','payment_status')">
+            💰 ${o.payment_status}
+          </button>
 
-        <p style="color:${o.production_status === 'prepared' ? 'green' : 'red'}">
-          🍪 ${o.production_status}
-        </p>
+          <button class="status-btn ${productionClass}"
+            onclick="updateStatus('${order.id}','production_status')">
+            🍪 ${o.production_status}
+          </button>
 
-        <p>🚚 ${o.delivery_status}</p>
-
-        const paymentClass =
-          o.payment_status === "complete" ? "btn-paid" : "btn-pending"
-        
-        const productionClass =
-          o.production_status === "prepared" ? "btn-prepared" : "btn-not-prepared"
-        
-        let deliveryClass = "btn-pending"
-        if (o.delivery_status === "dispatched") deliveryClass = "btn-dispatched"
-        if (o.delivery_status === "delivered") deliveryClass = "btn-delivered"
-        
-        html += `
-          <div class="card">
-            <h4>${order.customers?.name || "Unknown"}</h4>
-            <p>${items}</p>
-            <p>₹${order.total_amount}</p>
-        
-            <div style="margin-top:10px;">
-              <button class="status-btn ${paymentClass}"
-                onclick="updateStatus('${order.id}','payment_status')">
-                💰 ${o.payment_status}
-              </button>
-        
-              <button class="status-btn ${productionClass}"
-                onclick="updateStatus('${order.id}','production_status')">
-                🍪 ${o.production_status}
-              </button>
-        
-              <button class="status-btn ${deliveryClass}"
-                onclick="updateStatus('${order.id}','delivery_status')">
-                🚚 ${o.delivery_status}
-              </button>
-            </div>
-          </div>
-        `
+          <button class="status-btn ${deliveryClass}"
+            onclick="updateStatus('${order.id}','delivery_status')">
+            🚚 ${o.delivery_status}
+          </button>
+        </div>
       </div>
     `
   })
