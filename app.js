@@ -415,6 +415,89 @@ function renderAnalytics() {
   `
 }
 
+
+
+function renderCharts() {
+  if (!window.Chart) return
+
+  const monthly = {}
+  const weekly = {}
+  const skuMap = {}
+  const dailyRevenue = {}
+
+  ordersData.forEach(order => {
+    const date = new Date(order.created_at)
+    const amount = Number(order.total_amount)
+
+    const month = date.toLocaleString("default", { month: "short" })
+    monthly[month] = (monthly[month] || 0) + amount
+
+    const week = `W${Math.ceil(date.getDate() / 7)}`
+    weekly[week] = (weekly[week] || 0) + amount
+
+    const day = date.toISOString().split("T")[0]
+    dailyRevenue[day] = (dailyRevenue[day] || 0) + amount
+
+    ;(order.order_items || []).forEach(item => {
+      skuMap[item.product_name] = (skuMap[item.product_name] || 0) + item.quantity
+    })
+  })
+
+  // destroy previous charts (important)
+  Chart.helpers.each(Chart.instances, function(instance){
+    instance.destroy()
+  })
+
+  // MONTHLY
+  new Chart(document.getElementById("monthlyChart"), {
+    type: "bar",
+    data: {
+      labels: Object.keys(monthly),
+      datasets: [{
+        label: "₹ Sales",
+        data: Object.values(monthly)
+      }]
+    }
+  })
+
+  // REVENUE LINE
+  new Chart(document.getElementById("revenueChart"), {
+    type: "line",
+    data: {
+      labels: Object.keys(dailyRevenue),
+      datasets: [{
+        label: "Revenue",
+        data: Object.values(dailyRevenue),
+        tension: 0.3
+      }]
+    }
+  })
+
+  // WEEKLY
+  new Chart(document.getElementById("weeklyChart"), {
+    type: "bar",
+    data: {
+      labels: Object.keys(weekly),
+      datasets: [{
+        label: "Weekly",
+        data: Object.values(weekly)
+      }]
+    }
+  })
+
+  // SKU
+  new Chart(document.getElementById("skuChart"), {
+    type: "bar",
+    data: {
+      labels: Object.keys(skuMap),
+      datasets: [{
+        label: "Units Sold",
+        data: Object.values(skuMap)
+      }]
+    }
+  })
+}
+
 // =====================
 // CUSTOMERS
 // =====================
