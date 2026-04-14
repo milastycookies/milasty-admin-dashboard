@@ -81,11 +81,11 @@ async function loadOrders() {
     // Update state BEFORE render
     isLoading = false
     
-    // Always render on first load OR if data changed
-    if (isFirstLoad || newHash !== lastDataHash) {
-      lastDataHash = newHash
-      render()
-    }
+    // Always update hash
+    lastDataHash = newHash
+
+    // Always render after fetch
+    render()
     
     isFirstLoad = false
 
