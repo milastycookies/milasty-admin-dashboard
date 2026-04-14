@@ -312,11 +312,107 @@ function renderDispatch() {
 // ANALYTICS
 // =====================
 function renderAnalytics() {
-  let html = "<h3>Analytics</h3>"
-  let total = 0
-  ordersData.forEach(o => total += Number(o.total_amount))
+  let totalRevenue = 0
+  let totalOrders = ordersData.length
 
-  return `<div class="card">💰 Total: ₹${total}</div>`
+  const monthly = {}
+  const weekly = {}
+  const skuMap = {}
+  const dailyRevenue = {}
+  const repeatCustomers = {}
+
+  ordersData.forEach(order => {
+    const date = new Date(order.created_at)
+    const amount = Number(order.total_amount)
+
+    totalRevenue += amount
+
+    // MONTH
+    const month = date.toLocaleString("default", { month: "short" })
+    monthly[month] = (monthly[month] || 0) + amount
+
+    // WEEK
+    const week = `W${Math.ceil(date.getDate() / 7)}`
+    weekly[week] = (weekly[week] || 0) + amount
+
+    // DAY
+    const day = date.toISOString().split("T")[0]
+    dailyRevenue[day] = (dailyRevenue[day] || 0) + amount
+
+    // CUSTOMER
+    const phone = order.customers?.phone
+    if (phone) {
+      repeatCustomers[phone] = (repeatCustomers[phone] || 0) + 1
+    }
+
+    // SKU
+    ;(order.order_items || []).forEach(item => {
+      skuMap[item.product_name] = (skuMap[item.product_name] || 0) + item.quantity
+    })
+  })
+
+  const avgOrder = totalOrders ? Math.round(totalRevenue / totalOrders) : 0
+
+  const repeatCount = Object.values(repeatCustomers).filter(c => c > 1).length
+  const repeatRate = totalOrders ? Math.round((repeatCount / totalOrders) * 100) : 0
+
+  // Top SKU
+  const topSKU = Object.entries(skuMap).sort((a,b)=>b[1]-a[1])[0]
+
+  return `
+    <h3>📊 Business Analytics</h3>
+
+    <!-- KPI CARDS -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div class="card">
+        <div style="font-size:12px;color:#777;">Revenue</div>
+        <div style="font-size:18px;font-weight:600;">₹${totalRevenue}</div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:12px;color:#777;">Orders</div>
+        <div style="font-size:18px;font-weight:600;">${totalOrders}</div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:12px;color:#777;">Avg Order</div>
+        <div style="font-size:18px;font-weight:600;">₹${avgOrder}</div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:12px;color:#777;">Repeat Rate</div>
+        <div style="font-size:18px;font-weight:600;">${repeatRate}%</div>
+      </div>
+    </div>
+
+    <!-- INSIGHTS -->
+    <div class="card">
+      <b>🔥 Insights</b><br><br>
+      🏆 Top SKU: ${topSKU ? topSKU[0] : "-"}<br>
+      🔁 Repeat Customers: ${repeatCount}<br>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="card">
+      <b>Monthly Sales</b>
+      <canvas id="monthlyChart"></canvas>
+    </div>
+
+    <div class="card">
+      <b>Revenue Trend</b>
+      <canvas id="revenueChart"></canvas>
+    </div>
+
+    <div class="card">
+      <b>Weekly Sales</b>
+      <canvas id="weeklyChart"></canvas>
+    </div>
+
+    <div class="card">
+      <b>SKU Performance</b>
+      <canvas id="skuChart"></canvas>
+    </div>
+  `
 }
 
 // =====================
