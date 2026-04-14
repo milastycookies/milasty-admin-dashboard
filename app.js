@@ -353,23 +353,39 @@ window.setTab = function (tab) {
 // =====================
 function render() {
   if (document.hidden) return
+
   const app = document.getElementById("app")
 
   if (isLoading) {
-    app.innerHTML = "<div class='card'>Loading...</div>"
+    if (lastRenderedHTML !== "loading") {
+      app.innerHTML = "<div class='card'>Loading...</div>"
+      lastRenderedHTML = "loading"
+    }
     return
   }
 
-  if (!ordersData.length && !isLoading) {
-    app.innerHTML = "<div class='card'>No orders</div>"
+  if (!ordersData.length) {
+    if (lastRenderedHTML !== "empty") {
+      app.innerHTML = "<div class='card'>No orders</div>"
+      lastRenderedHTML = "empty"
+    }
     return
   }
 
-  if (currentTab === "production") app.innerHTML = renderProduction()
-  if (currentTab === "orders") app.innerHTML = renderOrders()
-  if (currentTab === "dispatch") app.innerHTML = renderDispatch()
-  if (currentTab === "analytics") app.innerHTML = renderAnalytics()
-  if (currentTab === "customers") app.innerHTML = renderCustomers()
+  let newHTML = ""
+
+  if (currentTab === "production") newHTML = renderProduction()
+  if (currentTab === "orders") newHTML = renderOrders()
+  if (currentTab === "dispatch") newHTML = renderDispatch()
+  if (currentTab === "analytics") newHTML = renderAnalytics()
+  if (currentTab === "customers") newHTML = renderCustomers()
+
+  // 🔥 ONLY update DOM if changed
+  if (newHTML !== lastRenderedHTML || currentTab !== lastRenderedTab) {
+    app.innerHTML = newHTML
+    lastRenderedHTML = newHTML
+    lastRenderedTab = currentTab
+  }
 }
 
 // =====================
