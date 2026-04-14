@@ -262,9 +262,40 @@ function renderOrders() {
 
         <p>🚚 ${o.delivery_status}</p>
 
-        <button ${isUpdatingPayment ? "disabled" : ""} onclick="updateStatus('${order.id}','payment_status')">💰 Payment Status</button>
-        <button ${isUpdatingProduction ? "disabled" : ""} onclick="updateStatus('${order.id}','production_status')">🍪 Production Status</button>
-        <button ${isUpdatingDelivery ? "disabled" : ""} onclick="updateStatus('${order.id}','delivery_status')">🚚 Shipment Status</button>
+        const paymentClass =
+          o.payment_status === "complete" ? "btn-paid" : "btn-pending"
+        
+        const productionClass =
+          o.production_status === "prepared" ? "btn-prepared" : "btn-not-prepared"
+        
+        let deliveryClass = "btn-pending"
+        if (o.delivery_status === "dispatched") deliveryClass = "btn-dispatched"
+        if (o.delivery_status === "delivered") deliveryClass = "btn-delivered"
+        
+        html += `
+          <div class="card">
+            <h4>${order.customers?.name || "Unknown"}</h4>
+            <p>${items}</p>
+            <p>₹${order.total_amount}</p>
+        
+            <div style="margin-top:10px;">
+              <button class="status-btn ${paymentClass}"
+                onclick="updateStatus('${order.id}','payment_status')">
+                💰 ${o.payment_status}
+              </button>
+        
+              <button class="status-btn ${productionClass}"
+                onclick="updateStatus('${order.id}','production_status')">
+                🍪 ${o.production_status}
+              </button>
+        
+              <button class="status-btn ${deliveryClass}"
+                onclick="updateStatus('${order.id}','delivery_status')">
+                🚚 ${o.delivery_status}
+              </button>
+            </div>
+          </div>
+        `
       </div>
     `
   })
