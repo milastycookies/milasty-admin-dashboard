@@ -51,10 +51,8 @@ async function loadOrders() {
   isFetching = true
   
   try {
-    if (isFirstLoad) {
-      isLoading = true
-      render()
-    }
+    isLoading = true
+    render()
     
     const res = await fetch(`${API_BASE}/get-orders`, {
       headers: {
