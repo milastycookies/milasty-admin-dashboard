@@ -242,7 +242,9 @@ function renderOrders() {
       `${i.product_name} x${i.quantity}`
     ).join(", ")
 
-    const isUpdating = window._updatingMap?.[String(order.id)]
+    const isUpdatingPayment = window._updatingMap?.[`${order.id}_payment_status`]
+    const isUpdatingProduction = window._updatingMap?.[`${order.id}_production_status`]
+    const isUpdatingDelivery = window._updatingMap?.[`${order.id}_delivery_status`]
 
     html += `
       <div class="card">
