@@ -380,12 +380,19 @@ function render() {
     return
   }
 
-  if (!ordersData.length) {
-    if (lastRenderedHTML !== "empty") {
-      app.innerHTML = "<div class='card'>No orders</div>"
-      lastRenderedHTML = "empty"
-    }
-    return
+  // ❌ REMOVE empty block completely
+  
+  let newHTML = ""
+  
+  if (currentTab === "production") newHTML = renderProduction()
+  if (currentTab === "orders") newHTML = renderOrders()
+  if (currentTab === "dispatch") newHTML = renderDispatch()
+  if (currentTab === "analytics") newHTML = renderAnalytics()
+  if (currentTab === "customers") newHTML = renderCustomers()
+  
+  // fallback if nothing
+  if (!newHTML) {
+    newHTML = "<div class='card'>No data available</div>"
   }
 
   let newHTML = ""
