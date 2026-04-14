@@ -450,65 +450,90 @@ function renderCharts() {
   window._charts = []
 
   // MONTHLY
+  const monthOrder = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+  
+  const sortedMonths = monthOrder.filter(m => monthly[m])
+  const sortedMonthlyValues = sortedMonths.map(m => monthly[m])
+  
   window._charts.push(
     new Chart(document.getElementById("monthlyChart"), {
       type: "bar",
       data: {
-        labels: Object.keys(monthly),
+        labels: sortedMonths,
         datasets: [{
           label: "₹ Sales",
-          data: Object.values(monthly)
+          data: sortedMonthlyValues
         }]
+      },
+      options: {
+        scales: {
+          x: {
+            ticks: {
+              maxTicksLimit: 6
+            }
+          }
+        }
       }
     })
   )
 
   // REVENUE LINE
-  // ✅ SORT DATES (VERY IMPORTANT)
-const sortedDates = Object.keys(dailyRevenue).sort()
-const sortedRevenue = sortedDates.map(d => dailyRevenue[d])
-
-window._charts.push(
-  new Chart(document.getElementById("revenueChart"), {
-    type: "line",
-    data: {
-      labels: sortedDates,
-      datasets: [{
-        label: "Revenue",
-        data: sortedRevenue,
-        tension: 0.3
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        x: {
-          ticks: {
-            maxTicksLimit: 6,   // 🔥 prevents clutter
-            callback: function(value) {
-              const label = this.getLabelForValue(value)
-              return new Date(label).toLocaleDateString("en-IN", {
-                day: "numeric",
-                month: "short"
-              })
+  const sortedDates = Object.keys(dailyRevenue).sort()
+  const sortedRevenue = sortedDates.map(d => dailyRevenue[d])
+  
+  window._charts.push(
+    new Chart(document.getElementById("revenueChart"), {
+      type: "line",
+      data: {
+        labels: sortedDates,
+        datasets: [{
+          label: "Revenue",
+          data: sortedRevenue,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            ticks: {
+              maxTicksLimit: 6,   // 🔥 prevents clutter
+              callback: function(value) {
+                const label = this.getLabelForValue(value)
+                return new Date(label).toLocaleDateString("en-IN", {
+                  day: "numeric",
+                  month: "short"
+                })
+              }
             }
           }
         }
       }
-    }
-  })
-)
+    })
+  )
 
   // WEEKLY
+  const sortedWeeks = Object.keys(weekly).sort()
+  const weeklyValues = sortedWeeks.map(w => weekly[w])
+  
   window._charts.push(
     new Chart(document.getElementById("weeklyChart"), {
       type: "bar",
       data: {
-        labels: Object.keys(weekly),
+        labels: sortedWeeks.map(w => `Week ${w.replace("W","")}`),
         datasets: [{
           label: "Weekly",
-          data: Object.values(weekly)
+          data: weeklyValues
         }]
+      },
+      options: {
+        scales: {
+          x: {
+            ticks: {
+              maxTicksLimit: 6
+            }
+          }
+        }
       }
     })
   )
