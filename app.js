@@ -464,19 +464,40 @@ function renderCharts() {
   )
 
   // REVENUE LINE
-  window._charts.push(
-    new Chart(document.getElementById("revenueChart"), {
-      type: "line",
-      data: {
-        labels: Object.keys(dailyRevenue),
-        datasets: [{
-          label: "Revenue",
-          data: Object.values(dailyRevenue),
-          tension: 0.3
-        }]
+  // ✅ SORT DATES (VERY IMPORTANT)
+const sortedDates = Object.keys(dailyRevenue).sort()
+const sortedRevenue = sortedDates.map(d => dailyRevenue[d])
+
+window._charts.push(
+  new Chart(document.getElementById("revenueChart"), {
+    type: "line",
+    data: {
+      labels: sortedDates,
+      datasets: [{
+        label: "Revenue",
+        data: sortedRevenue,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: {
+          ticks: {
+            maxTicksLimit: 6,   // 🔥 prevents clutter
+            callback: function(value) {
+              const label = this.getLabelForValue(value)
+              return new Date(label).toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short"
+              })
+            }
+          }
+        }
       }
-    })
-  )
+    }
+  })
+)
 
   // WEEKLY
   window._charts.push(
