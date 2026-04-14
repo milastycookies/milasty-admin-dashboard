@@ -312,6 +312,7 @@ function renderDispatch() {
 // ANALYTICS
 // =====================
 function renderAnalytics() {
+  let html = "<h3>Analytics</h3>"
   let total = 0
   ordersData.forEach(o => total += Number(o.total_amount))
 
