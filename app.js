@@ -170,7 +170,7 @@ window.updateStatus = async function (orderId, field) {
     loadOrders()
   }
 
-  window._updatingMap[orderId] = false
+  window._updatingMap[key] = false
 }
 
 // =====================
