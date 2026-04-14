@@ -362,6 +362,15 @@ function renderCustomers() {
 // =====================
 window.setTab = function (tab) {
   currentTab = tab
+
+  // 🔥 update active tab UI
+  document.querySelectorAll(".nav button").forEach(btn => {
+    btn.classList.remove("active")
+  })
+
+  const activeBtn = document.getElementById(`tab-${tab}`)
+  if (activeBtn) activeBtn.classList.add("active")
+
   render()
 }
 
@@ -413,3 +422,6 @@ setInterval(() => {
 // INIT
 // =====================
 loadOrders()
+
+// set default active tab
+document.getElementById("tab-production")?.classList.add("active")
