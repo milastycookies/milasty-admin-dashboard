@@ -1,16 +1,131 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MILASTY Admin Dashboard</title>
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#000000" />
+  <meta name="theme-color" content="#111111" />
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-  <link rel="stylesheet" href="style.css" />
+  <!-- FONT -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: #f6f7fb;
+      color: #111;
+    }
+
+    /* =======================
+       HEADER
+    ======================= */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: white;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .logout {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 8px;
+      background: #111;
+      color: white;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    /* =======================
+       CONTENT
+    ======================= */
+    .container {
+      padding: 16px;
+      padding-bottom: 90px; /* space for nav */
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+    }
+
+    .loading {
+      text-align: center;
+      color: #777;
+      margin-top: 40px;
+    }
+
+    /* =======================
+       BOTTOM NAV
+    ======================= */
+    .nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      background: white;
+      border-top: 1px solid #eee;
+      padding: 6px 0;
+      z-index: 20;
+    }
+
+    .nav button {
+      flex: 1;
+      border: none;
+      background: none;
+      font-size: 11px;
+      color: #555;
+      padding: 6px 0;
+      cursor: pointer;
+    }
+
+    .nav button.active {
+      color: #000;
+      font-weight: 600;
+    }
+
+    /* =======================
+       MOBILE TWEAKS
+    ======================= */
+    @media (min-width: 768px) {
+      .container {
+        max-width: 900px;
+        margin: auto;
+      }
+
+      .nav {
+        max-width: 900px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 14px 14px 0 0;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -18,40 +133,28 @@
   <!-- 🔐 AUTH CHECK -->
   <script>
     if (!localStorage.getItem("admin_logged_in")) {
-      window.location.href = "/login.html"
+      window.location.replace("/login.html")
     }
   </script>
 
-  <!-- TOP -->
-  <div style="position:relative;">
-    <h2>MILASTY Dashboard</h2>
-
-    <!-- LOGOUT -->
-    <button onclick="logout()" style="
-      position:absolute;
-      right:10px;
-      top:10px;
-      padding:6px 10px;
-      border:none;
-      border-radius:6px;
-      background:black;
-      color:white;
-      font-size:12px;
-    ">
-      Logout
-    </button>
+  <!-- HEADER -->
+  <div class="header">
+    <div class="title">🍪 MILASTY Dashboard</div>
+    <button class="logout" onclick="logout()">Logout</button>
   </div>
 
   <!-- CONTENT -->
-  <div id="app">Loading dashboard...</div>
+  <div class="container">
+    <div id="app" class="loading">Loading dashboard...</div>
+  </div>
 
   <!-- BOTTOM NAV -->
   <div class="nav">
-    <button onclick="setTab('production')">🍪<br>Production</button>
-    <button onclick="setTab('orders')">📦<br>Orders</button>
-    <button onclick="setTab('dispatch')">🚚<br>Dispatch</button>
-    <button onclick="setTab('analytics')">📊<br>Analytics</button>
-    <button onclick="setTab('customers')">👥<br>Customers</button>
+    <button onclick="setTab('production')" id="tab-production">🍪<br>Production</button>
+    <button onclick="setTab('orders')" id="tab-orders">📦<br>Orders</button>
+    <button onclick="setTab('dispatch')" id="tab-dispatch">🚚<br>Dispatch</button>
+    <button onclick="setTab('analytics')" id="tab-analytics">📊<br>Analytics</button>
+    <button onclick="setTab('customers')" id="tab-customers">👥<br>Customers</button>
   </div>
 
   <!-- LIBS -->
