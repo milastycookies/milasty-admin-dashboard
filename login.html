@@ -95,12 +95,13 @@
     // AUTO REDIRECT
     // =====================
     // Prevent flicker redirect
-    window.addEventListener("load", () => {
-      setTimeout(() => {
-        if (localStorage.getItem("admin_token")) {
-          window.location.replace("/")
-        }
-      }, 100)
+    window.addEventListener("DOMContentLoaded", () => {
+      if (localStorage.getItem("admin_token")) {
+        window.location.replace("/")
+      } else {
+        // Show page only if NOT redirecting
+        document.body.style.display = "flex"
+      }
     })
 
     // =====================
