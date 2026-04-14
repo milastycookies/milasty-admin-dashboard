@@ -113,7 +113,8 @@ window.updateStatus = async function (orderId, field) {
   orderId = String(orderId)
   if (!window._updatingMap) window._updatingMap = {}
 
-  if (window._updatingMap[orderId]) return
+  const key = `${orderId}_${field}`
+  if (window._updatingMap[key]) return
   const key = `${orderId}_${field}`
   window._updatingMap[key] = true
 
