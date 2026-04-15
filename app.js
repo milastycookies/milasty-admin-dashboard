@@ -366,13 +366,6 @@ function renderAnalytics() {
   const dailyRevenue = {}
   const repeatCustomers = {}
 
-  const now = new Date()
-
-  const filteredOrders = ordersData.filter(order => {
-    const date = new Date(order.created_at)
-    const diff = (now - date) / (1000 * 60 * 60 * 24)
-    return diff <= analyticsRange
-  })
 
   filteredOrders.forEach(order => {
     const date = new Date(order.created_at)
