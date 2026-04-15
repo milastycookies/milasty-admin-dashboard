@@ -137,6 +137,12 @@
     // =====================
     btn.addEventListener("click", login)
 
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        login()
+      }
+    })
+
     async function login() {
       const email = document.getElementById("email").value.trim()
       const password = document.getElementById("password").value.trim()
