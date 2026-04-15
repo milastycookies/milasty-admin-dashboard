@@ -19,7 +19,7 @@ let lastRenderedHTML = ""
 // =====================
 // AUTH CHECK
 // =====================
-if (!localStorage.getItem("admin_logged_in")) {
+if (!localStorage.getItem("token")) {
   window.location.href = "/login.html"
 }
 
@@ -27,7 +27,7 @@ if (!localStorage.getItem("admin_logged_in")) {
 // LOGOUT
 // =====================
 window.logout = function () {
-  localStorage.removeItem("admin_logged_in")
+  localStorage.removeItem("token")
   window.location.href = "/login.html"
 }
 
