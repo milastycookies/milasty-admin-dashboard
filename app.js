@@ -154,7 +154,7 @@ window.updateStatus = async function (orderId, field) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": AUTH_TOKEN
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
       },
       body: JSON.stringify({
         id: orderId,
