@@ -104,6 +104,11 @@ async function loadOrders() {
         <div class="card">⚠️ Failed to load. Retrying...</div>
       `
     }
+
+    if (err.message.includes("401")) {
+      localStorage.removeItem("token")
+      window.location.href = "/login.html"
+    }
   
     setTimeout(loadOrders, 3000)
   } finally {
