@@ -393,7 +393,10 @@ function renderAnalytics() {
     totalRevenue += amount
 
     // MONTH
-    const month = date.toLocaleString("default", { month: "short" })
+    const month = date.toLocaleString("en-IN", {
+      month: "short",
+      year: "2-digit"
+    })
     monthly[month] = (monthly[month] || 0) + amount
 
     // WEEK
