@@ -321,7 +321,7 @@ function renderOrders() {
 function renderDispatch() {
   let html = "<h3>Dispatch</h3>"
 
-  ordersData.forEach(order => {
+  filteredOrders.forEach(order => {
     const o = applyUIState(order)
 
     if (o.production_status === "prepared" && o.delivery_status !== "delivered") {
