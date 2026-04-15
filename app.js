@@ -352,6 +352,14 @@ function renderAnalytics() {
   const dailyRevenue = {}
   const repeatCustomers = {}
 
+  const now = new Date()
+
+  const filteredOrders = ordersData.filter(order => {
+    const date = new Date(order.created_at)
+    const diff = (now - date) / (1000 * 60 * 60 * 24)
+    return diff <= analyticsRange
+  })
+
   ordersData.forEach(order => {
     const date = new Date(order.created_at)
     const amount = Number(order.total_amount)
@@ -392,6 +400,23 @@ function renderAnalytics() {
 
   return `
     <h3>📊 Business Analytics</h3>
+
+    <div style="display:flex;gap:6px;margin-bottom:10px;">
+      ${[7,30,180,365].map(d => `
+        <button 
+          onclick="setAnalyticsRange(${d})"
+          style="
+            padding:6px 10px;
+            border-radius:6px;
+            border:none;
+            cursor:pointer;
+            background:${analyticsRange===d ? '#333' : '#eee'};
+            color:${analyticsRange===d ? '#fff' : '#333'};
+          ">
+          ${d}d
+        </button>
+      `).join("")}
+    </div>
 
     <!-- KPI CARDS -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
@@ -446,6 +471,11 @@ function renderAnalytics() {
   `
 }
 
+
+window.setAnalyticsRange = function(days) {
+  analyticsRange = days
+  render()
+}
 
 
 function renderCharts() {
