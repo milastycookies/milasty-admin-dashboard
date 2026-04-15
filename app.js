@@ -152,6 +152,7 @@ window.updateStatus = async function (orderId, field) {
   uiStateDB[orderId][field] = newValue
 
   saveLocalState(local)
+  document.body.style.opacity = "0.95"
   render()
   lastRenderedHTML = "" // force re-render next cycle
 
@@ -177,6 +178,8 @@ window.updateStatus = async function (orderId, field) {
   }
 
   window._updatingMap[key] = false
+
+  document.body.style.opacity = "1"
 }
 
 // =====================
