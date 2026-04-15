@@ -566,7 +566,8 @@ function renderCharts() {
       type: "bar",
       data: {
         labels: sortedMonths.map(m => {
-          const d = new Date(m + "-01")
+          const [mon, yr] = m.split(" ")
+          const d = new Date(`20${yr}-${mon}-01`)
           return d.toLocaleDateString("en-IN", {
             month: "short",
             year: "2-digit"
