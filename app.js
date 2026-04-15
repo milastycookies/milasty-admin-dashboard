@@ -120,8 +120,8 @@ window.updateStatus = async function (orderId, field) {
   const local = getLocalState()
 
   const current =
-    uiStateDB[orderId]?.[field] ||
-    local[orderId]?.[field]
+    local[orderId]?.[field] ??
+    uiStateDB[orderId]?.[field]
 
   let newValue
 
