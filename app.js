@@ -586,10 +586,10 @@ function renderCharts() {
     new Chart(document.getElementById("revenueChart"), {
       type: "line",
       data: {
-        labels: sortedDates,
+        labels: sortedDates.reverse(),
         datasets: [{
           label: "Revenue",
-          data: sortedRevenue,
+          data: sortedRevenue.reverse(),
           tension: 0.3
         }]
       },
