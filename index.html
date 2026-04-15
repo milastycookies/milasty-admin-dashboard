@@ -209,7 +209,7 @@
 
   <!-- 🔐 AUTH CHECK -->
   <script>
-    if (!localStorage.getItem("admin_logged_in")) {
+    if (!localStorage.getItem("token")) {
       window.location.replace("/login.html")
     }
   </script>
