@@ -62,6 +62,12 @@ async function loadOrders() {
       }
     })
 
+    if (res.status === 401) {
+      localStorage.removeItem("token")
+      window.location.href = "/login.html"
+      return
+    }
+    
     if (!res.ok) throw new Error("Fetch failed")
 
     const data = await res.json()
