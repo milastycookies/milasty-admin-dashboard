@@ -134,6 +134,7 @@ async function loadOrders() {
 // UPDATE STATUS
 // =====================
 window.updateStatus = async function (orderId, field) {
+  document.body.style.pointerEvents = "none"
   orderId = String(orderId)
   if (!window._updatingMap) window._updatingMap = {}
 
@@ -200,6 +201,7 @@ window.updateStatus = async function (orderId, field) {
   window._updatingMap[key] = false
 
   document.body.style.opacity = "1"
+  document.body.style.pointerEvents = "none"
 }
 
 // =====================
