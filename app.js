@@ -58,7 +58,7 @@ async function loadOrders() {
     const res = await fetch(`${API_BASE}/get-orders`, {
       headers: {
         "Content-Type": "application/json",
-        "Authorization": AUTH_TOKEN
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
       }
     })
 
