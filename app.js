@@ -357,7 +357,7 @@ function renderDispatch() {
 // ANALYTICS
 // =====================
 function renderAnalytics() {
-  let totalRevenue = currentRevenue
+  let totalRevenue = 0
   let totalOrders = filteredOrders.length
 
   const monthly = {}
@@ -380,6 +380,8 @@ function renderAnalytics() {
   
   filteredOrders.forEach(o => currentRevenue += Number(o.total_amount))
   previousOrders.forEach(o => previousRevenue += Number(o.total_amount))
+
+  totalRevenue = currentRevenue
   
   const growth = previousRevenue
     ? Math.round(((currentRevenue - previousRevenue) / previousRevenue) * 100)
@@ -390,7 +392,6 @@ function renderAnalytics() {
     const date = new Date(order.created_at)
     const amount = Number(order.total_amount)
 
-    totalRevenue += amount
 
     // MONTH
     const month = date.toLocaleString("en-IN", {
