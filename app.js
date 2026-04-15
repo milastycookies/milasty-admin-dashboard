@@ -488,6 +488,7 @@ function renderAnalytics() {
 
 window.setAnalyticsRange = function(days) {
   analyticsRange = days
+  updateFilteredOrders()
   render()
 }
 
