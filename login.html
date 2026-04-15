@@ -186,7 +186,7 @@
 
       } catch (err) {
         console.error(err)
-        errorDiv.innerText = "Server error. Check backend or CORS."
+        errorDiv.innerText = err.message || "Something went wrong"
       } finally {
         btn.disabled = false
         btn.innerText = "Login"
