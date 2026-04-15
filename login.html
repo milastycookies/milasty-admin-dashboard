@@ -129,10 +129,11 @@
     // =====================
     // AUTO REDIRECT
     // =====================
-    // Prevent flicker redirect
     window.addEventListener("DOMContentLoaded", () => {
       if (localStorage.getItem("token")) {
         window.location.replace("/")
+      } else {
+        document.body.style.visibility = "visible"
       }
     })
 
