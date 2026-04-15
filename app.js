@@ -15,6 +15,7 @@ let isFirstLoad = true
 let isFetching = false
 let lastRenderedTab = ""
 let lastRenderedHTML = ""
+let analyticsRange = 30 // default 30 days
 
 // =====================
 // AUTH CHECK
