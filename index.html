@@ -204,6 +204,11 @@
       }
     }
   </style>
+
+  <style>
+    body { visibility: hidden; }
+  </style>
+  
 </head>
 
 <body>
@@ -211,6 +216,8 @@
   <script>
     if (!localStorage.getItem("token")) {
       window.location.replace("/login.html")
+    } else {
+      document.body.style.visibility = "visible"
     }
   </script>
 
