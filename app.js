@@ -215,19 +215,19 @@ function applyUIState(order) {
   return {
     ...order,
     payment_status:
-      db.payment_status ||
-      local[String(order.id)]?.payment_status ||
-      order.payment_status ||
+      db.payment_status ??
+      local[String(order.id)]?.payment_status ??
+      order.payment_status ??
       "pending",
 
     production_status:
-      db.production_status ||
-      local[String(order.id)]?.production_status ||
+      db.production_status ??
+      local[String(order.id)]?.production_status ??
       "not_prepared",
 
     delivery_status:
-      db.delivery_status ||
-      local[String(order.id)]?.delivery_status ||
+      db.delivery_status ??
+      local[String(order.id)]?.delivery_status ??
       "pending"
   }
 }
