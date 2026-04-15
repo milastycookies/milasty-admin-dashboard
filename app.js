@@ -2,7 +2,6 @@
 // CONFIG
 // =====================
 const API_BASE = "https://admin-dashboard-production-2711.up.railway.app"
-// const AUTH_TOKEN = "Bearer milasty_ops_2026_secure"
 
 // =====================
 // STATE
