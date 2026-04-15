@@ -207,6 +207,12 @@
 
 <body>
 
+  <script>
+    if (!localStorage.getItem("token")) {
+      window.location.replace("/login.html")
+    }
+  </script>
+
 
   <!-- HEADER -->
   <div class="header">
