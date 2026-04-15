@@ -202,7 +202,7 @@ window.updateStatus = async function (orderId, field) {
   window._updatingMap[key] = false
 
   document.body.style.opacity = "1"
-  document.body.style.pointerEvents = "none"
+  document.body.style.pointerEvents = "auto"
 }
 
 // =====================
