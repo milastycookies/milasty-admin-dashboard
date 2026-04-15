@@ -291,17 +291,17 @@ function renderOrders() {
 
         <div style="margin-top:10px;">
           <button class="status-btn ${paymentClass}"
-            onclick="updateStatus('${order.id}','payment_status')">
+            onclick="updateStatus('${order.id}','payment_status', this)">
             💰 ${o.payment_status}
           </button>
 
           <button class="status-btn ${productionClass}"
-            onclick="updateStatus('${order.id}','production_status')">
+            onclick="updateStatus('${order.id}','production_status', this)">
             🍪 ${o.production_status}
           </button>
 
           <button class="status-btn ${deliveryClass}"
-            onclick="updateStatus('${order.id}','delivery_status')">
+            onclick="updateStatus('${order.id}','delivery_status', this)">
             🚚 ${o.delivery_status}
           </button>
         </div>
