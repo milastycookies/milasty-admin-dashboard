@@ -267,7 +267,7 @@ function renderProduction() {
 function renderOrders() {
   let html = "<h3>Orders</h3>"
 
-  ordersData.forEach(order => {
+  filteredOrders.forEach(order => {
     const o = applyUIState(order)
 
     const items = (order.order_items || []).map(i =>
