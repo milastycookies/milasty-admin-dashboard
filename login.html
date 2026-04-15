@@ -175,8 +175,8 @@
           throw new Error("Invalid server response")
         }
 
-        if (!res.ok || !data.success) {
-          errorDiv.innerText = "Invalid credentials"
+        if (!res.ok || !data.access_token) {
+          errorDiv.innerText = data.error || "Invalid credentials"
           return
         }
 
