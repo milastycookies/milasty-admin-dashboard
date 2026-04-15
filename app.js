@@ -643,7 +643,11 @@ function render() {
 
   if (isLoading) {
     if (lastRenderedHTML !== "loading") {
-      app.innerHTML = "<div class='card'>Loading...</div>"
+      app.innerHTML = `
+        <div class="card" style="text-align:center;">
+          <div style="font-size:14px;color:#777;">Loading dashboard...</div>
+        </div>
+      `
       lastRenderedHTML = "loading"
     }
     return
