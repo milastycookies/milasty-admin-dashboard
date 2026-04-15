@@ -465,6 +465,13 @@ function renderAnalytics() {
         <div style="font-size:12px;color:#777;">Repeat Rate</div>
         <div style="font-size:18px;font-weight:600;">${repeatRate}%</div>
       </div>
+
+      <div class="card">
+        <div style="font-size:12px;color:#777;">Growth</div>
+        <div style="font-size:18px;font-weight:600;color:${growth >= 0 ? 'green' : 'red'};">
+          ${growth >= 0 ? '▲' : '▼'} ${Math.abs(growth)}%
+        </div>
+      </div>
     </div>
 
     <!-- INSIGHTS -->
