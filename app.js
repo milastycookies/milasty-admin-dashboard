@@ -77,6 +77,11 @@ async function loadOrders() {
     // Create hash to detect changes
     const newHash = JSON.stringify({ newOrders, newUI })
 
+    if (newHash === lastDataHash && !isFirstLoad) {
+      isFetching = false
+      return
+    }
+
     // Update state BEFORE render
     isLoading = false
     
