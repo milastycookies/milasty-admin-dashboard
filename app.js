@@ -238,7 +238,7 @@ function applyUIState(order) {
 function renderProduction() {
   let totalCookies = 0
 
-  ordersData.forEach(order => {
+  filteredOrders.forEach(order => {
     const o = applyUIState(order)
     if (o.production_status === "prepared") return
 
