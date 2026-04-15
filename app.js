@@ -148,6 +148,7 @@ window.updateStatus = async function (orderId, field) {
 
   saveLocalState(local)
   render()
+  lastRenderedHTML = "" // force re-render next cycle
 
   try {
     const res = await fetch(`${API_BASE}/update-order`, {
