@@ -357,7 +357,7 @@ function renderDispatch() {
 // ANALYTICS
 // =====================
 function renderAnalytics() {
-  let totalRevenue = 0
+  let totalRevenue = currentRevenue
   let totalOrders = filteredOrders.length
 
   const monthly = {}
