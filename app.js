@@ -527,7 +527,10 @@ function renderCharts() {
     const date = new Date(order.created_at)
     const amount = Number(order.total_amount)
 
-    const month = date.toLocaleString("default", { month: "short" })
+    const month = date.toLocaleString("en-IN", {
+      month: "short",
+      year: "2-digit"
+    })
     monthly[month] = (monthly[month] || 0) + amount
 
     const week = `W${Math.ceil(date.getDate() / 7)}`
