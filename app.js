@@ -174,6 +174,7 @@ window.updateStatus = async function (orderId, field) {
   document.body.style.opacity = "0.95"
   render()
   lastRenderedHTML = "" // force re-render next cycle
+  lastRenderedTab = ""
 
   try {
     const res = await fetch(`${API_BASE}/update-order`, {
