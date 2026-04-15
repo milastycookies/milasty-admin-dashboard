@@ -260,8 +260,14 @@
   
     const originalSetTab = window.setTab
     window.setTab = function(tab) {
-      updateActiveTab(tab)
-      originalSetTab(tab)
+      const container = document.querySelector(".container")
+      container.style.opacity = "0.6"
+    
+      setTimeout(() => {
+        updateActiveTab(tab)
+        originalSetTab(tab)
+        container.style.opacity = "1"
+      }, 100)
     }
   
     // default active
