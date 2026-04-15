@@ -620,7 +620,7 @@ function renderCustomers() {
 
   const map = {}
 
-  ordersData.forEach(order => {
+  filteredOrders.forEach(order => {
     const phone = order.customers?.phone
     if (!phone) return
 
