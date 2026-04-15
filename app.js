@@ -360,7 +360,7 @@ function renderAnalytics() {
     return diff <= analyticsRange
   })
 
-  ordersData.forEach(order => {
+  filteredOrders.forEach(order => {
     const date = new Date(order.created_at)
     const amount = Number(order.total_amount)
 
