@@ -358,7 +358,7 @@ function renderDispatch() {
 // =====================
 function renderAnalytics() {
   let totalRevenue = 0
-  let totalOrders = ordersData.length
+  let totalOrders = filteredOrders.length
 
   const monthly = {}
   const weekly = {}
