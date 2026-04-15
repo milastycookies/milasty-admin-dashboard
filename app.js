@@ -72,7 +72,15 @@ async function loadOrders() {
     
     // Only update if data changed
     ordersData = newOrders
-    uiStateDB = newUI
+
+    // merge instead of overwrite
+    Object.keys(newUI).forEach(id => {
+      if (!uiStateDB[id]) uiStateDB[id] = {}
+      uiStateDB[id] = {
+        ...uiStateDB[id],
+        ...newUI[id]
+      }
+    })
 
     // Create hash to detect changes
     const newHash = JSON.stringify({ newOrders, newUI })
