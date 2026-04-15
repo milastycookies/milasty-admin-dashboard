@@ -181,7 +181,7 @@
         }
 
         // ✅ SUCCESS
-        localStorage.setItem("admin_logged_in", "logged_in") // placeholder (JWT later)
+        localStorage.setItem("token", data.access_token)
         window.location.replace("/")
 
       } catch (err) {
