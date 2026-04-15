@@ -163,7 +163,7 @@
 
       btn.disabled = true
       btn.innerText = "Logging in..."
-      loadingDiv.innerText = "Connecting to server..."
+      loadingDiv.innerText = "Authenticating..."
 
       try {
         const res = await fetch(`${API_BASE}/login`, {
