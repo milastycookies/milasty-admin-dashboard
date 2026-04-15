@@ -81,6 +81,8 @@ async function loadOrders() {
     // Only update if data changed
     ordersData = newOrders
 
+    updateFilteredOrders()
+
     // merge instead of overwrite
     Object.keys(newUI).forEach(id => {
       if (!uiStateDB[id]) uiStateDB[id] = {}
@@ -127,6 +129,17 @@ async function loadOrders() {
   } finally {
     isFetching = false
   }
+}
+
+
+function updateFilteredOrders() {
+  const now = new Date()
+
+  filteredOrders = ordersData.filter(order => {
+    const date = new Date(order.created_at)
+    const diff = (now - date) / (1000 * 60 * 60 * 24)
+    return diff <= analyticsRange
+  })
 }
 
 // =====================
