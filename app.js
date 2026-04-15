@@ -172,7 +172,8 @@ window.updateStatus = async function (orderId, field) {
   uiStateDB[orderId][field] = newValue
 
   saveLocalState(local)
-  document.body.style.opacity = "0.95"
+  document.body.style.transition = "opacity 0.2s ease"
+  document.body.style.opacity = "0.6"
   render()
   lastRenderedHTML = "" // force re-render next cycle
   lastRenderedTab = ""
