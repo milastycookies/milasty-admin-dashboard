@@ -367,6 +367,25 @@ function renderAnalytics() {
   const repeatCustomers = {}
 
 
+  const now = new Date()
+
+  const previousOrders = ordersData.filter(order => {
+    const date = new Date(order.created_at)
+    const diff = (now - date) / (1000 * 60 * 60 * 24)
+    return diff > analyticsRange && diff <= analyticsRange * 2
+  })
+  
+  let currentRevenue = 0
+  let previousRevenue = 0
+  
+  filteredOrders.forEach(o => currentRevenue += Number(o.total_amount))
+  previousOrders.forEach(o => previousRevenue += Number(o.total_amount))
+  
+  const growth = previousRevenue
+    ? Math.round(((currentRevenue - previousRevenue) / previousRevenue) * 100)
+    : 0
+
+
   filteredOrders.forEach(order => {
     const date = new Date(order.created_at)
     const amount = Number(order.total_amount)
