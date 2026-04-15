@@ -480,7 +480,9 @@ function renderCharts() {
   window._charts = []
 
   // MONTHLY
-  const sortedMonths = Object.keys(monthly).sort()
+  const sortedMonths = Object.keys(monthly).sort((a, b) => {
+    return new Date(`${a} 1, 2024`) - new Date(`${b} 1, 2024`)
+  })
   const sortedMonthlyValues = sortedMonths.map(m => monthly[m])
   
   window._charts.push(
