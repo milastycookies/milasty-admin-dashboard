@@ -127,7 +127,7 @@
     // =====================
     // Prevent flicker redirect
     window.addEventListener("DOMContentLoaded", () => {
-      if (localStorage.getItem("admin_logged_in")) {
+      if (localStorage.getItem("token")) {
         window.location.replace("/")
       }
     })
