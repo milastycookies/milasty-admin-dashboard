@@ -552,7 +552,9 @@ function renderCharts() {
 
   // MONTHLY
   const sortedMonths = Object.keys(monthly).sort((a, b) => {
-    return new Date(`${a} 1, 2024`) - new Date(`${b} 1, 2024`)
+    return const sortedMonths = Object.keys(monthly).sort(
+            (a, b) => new Date(a) - new Date(b)
+          )
   })
   const sortedMonthlyValues = sortedMonths.map(m => monthly[m])
   
