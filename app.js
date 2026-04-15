@@ -471,7 +471,7 @@ function renderAnalytics() {
 
       <div class="card">
         <div style="font-size:12px;color:#777;">Growth</div>
-        <div style="font-size:18px;font-weight:600;color:${growth >= 0 ? 'green' : 'red'};">
+        <div style="font-size:18px;font-weight:600;color:${growth > 10 ? 'green' : growth >= 0 ? '#888' : 'red'};">
           ${growth >= 0 ? '▲' : '▼'} ${Math.abs(growth)}%
         </div>
       </div>
