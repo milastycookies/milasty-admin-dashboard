@@ -248,28 +248,6 @@ function applyUIState(order) {
 
 
 // =====================
-// PRODUCT DEFINITIONS
-// =====================
-const PRODUCT_MAP = {
-  "Signature Trio Box": [
-    { name: "Cocoa Ragi", qty: 8 },
-    { name: "Cardamom Bajra", qty: 8 },
-    { name: "Coconut Jowar", qty: 8 }
-  ],
-  "Elegant Celebration Ritual": [
-    { name: "Cocoa Ragi", qty: 10 },
-    { name: "Cardamom Bajra", qty: 10 },
-    { name: "Coconut Jowar", qty: 10 }
-  ],
-  "Imperial Wedding Ritual": [
-    { name: "Cocoa Ragi", qty: 15 },
-    { name: "Cardamom Bajra", qty: 15 },
-    { name: "Coconut Jowar", qty: 15 }
-  ],
-}
-
-
-// =====================
 // PRODUCTION
 // =====================
 function renderProduction() {
@@ -278,7 +256,6 @@ function renderProduction() {
   filteredOrders.forEach(order => {
     const o = applyUIState(order)
 
-    // Only NOT prepared
     if (o.production_status === "prepared") return
 
     ;(order.order_items || []).forEach(item => {
@@ -287,39 +264,56 @@ function renderProduction() {
       const quantity = Number(item.quantity)
 
       // =====================
-      // PACK SIZE → total cookies
-      // =====================
-      let cookiesPerUnit = 0
-
-      if (name.includes("trial")) cookiesPerUnit = 6
-      else if (name.includes("regular")) cookiesPerUnit = 8
-      else if (name.includes("couple")) cookiesPerUnit = 10
-      else if (name.includes("family")) cookiesPerUnit = 15
-
-      // fallback for bundles (important)
-      else if (name.includes("signature")) cookiesPerUnit = 24
-      else if (name.includes("gifting")) cookiesPerUnit = 30
-      else if (name.includes("wedding")) cookiesPerUnit = 45
-
-      const totalCookies = cookiesPerUnit * quantity
-
-      // =====================
-      // FLAVOUR SPLIT
+      // CASE 1: BUNDLES
       // =====================
       const recipe = PRODUCT_MAP[product]
 
-      if (!recipe) {
-        console.warn("No product mapping:", product)
+      if (recipe) {
+        recipe.forEach(f => {
+          if (!flavourTotals[f.name]) {
+            flavourTotals[f.name] = 0
+          }
+
+          flavourTotals[f.name] += f.qty * quantity
+        })
+
+        return // 🔥 important
+      }
+
+      // =====================
+      // CASE 2: DAILY RITUAL (single SKU)
+      // =====================
+
+      // 👇 detect flavour
+      let flavour = null
+
+      if (name.includes("cocoa")) flavour = "Cocoa Ragi"
+      else if (name.includes("cardamom")) flavour = "Cardamom Bajra"
+      else if (name.includes("coconut")) flavour = "Coconut Jowar"
+
+      if (!flavour) {
+        console.warn("Unknown flavour:", product)
         return
       }
 
-      recipe.forEach(f => {
-        if (!flavourTotals[f.name]) {
-          flavourTotals[f.name] = 0
-        }
-      
-        flavourTotals[f.name] += f.qty * quantity
-      })
+      // 👇 detect pack size
+      let cookies = 0
+
+      if (name.includes("trial")) cookies = 6
+      else if (name.includes("regular")) cookies = 8
+      else if (name.includes("couple")) cookies = 10
+      else if (name.includes("family")) cookies = 15
+
+      if (cookies === 0) {
+        console.warn("Unknown pack size:", product)
+        return
+      }
+
+      if (!flavourTotals[flavour]) {
+        flavourTotals[flavour] = 0
+      }
+
+      flavourTotals[flavour] += cookies * quantity
     })
   })
 
@@ -333,6 +327,10 @@ function renderProduction() {
     return html
   }
 
+  const total = Object.values(flavourTotals).reduce((a,b)=>a+b,0)
+
+  html += `<div class="card"><b>Total: ${total} cookies</b></div>`
+
   Object.entries(flavourTotals).forEach(([flavour, qty]) => {
     html += `
       <div class="card" style="display:flex; justify-content:space-between;">
@@ -343,60 +341,7 @@ function renderProduction() {
   })
 
   return html
-}// =====================
-// ORDERS
-// =====================
-function renderOrders() {
-  let html = "<h3>Orders</h3>"
-
-  filteredOrders.forEach(order => {
-    const o = applyUIState(order)
-
-    const items = (order.order_items || []).map(i =>
-      `${i.product_name} x${i.quantity}`
-    ).join(", ")
-
-    // ✅ MOVE LOGIC HERE (OUTSIDE HTML)
-    const paymentClass =
-      o.payment_status === "complete" ? "btn-paid" : "btn-pending"
-
-    const productionClass =
-      o.production_status === "prepared" ? "btn-prepared" : "btn-not-prepared"
-
-    let deliveryClass = "btn-pending"
-    if (o.delivery_status === "dispatched") deliveryClass = "btn-dispatched"
-    if (o.delivery_status === "delivered") deliveryClass = "btn-delivered"
-
-    // ✅ ONLY HTML BELOW
-    html += `
-      <div class="card">
-        <h4>${order.customers?.name || "Unknown"}</h4>
-        <p>${items}</p>
-        <p>₹${order.total_amount}</p>
-
-        <div style="margin-top:10px;">
-          <button class="status-btn ${paymentClass}"
-            onclick="updateStatus('${order.id}','payment_status', this)">
-            💰 ${o.payment_status}
-          </button>
-
-          <button class="status-btn ${productionClass}"
-            onclick="updateStatus('${order.id}','production_status', this)">
-            🍪 ${o.production_status}
-          </button>
-
-          <button class="status-btn ${deliveryClass}"
-            onclick="updateStatus('${order.id}','delivery_status', this)">
-            🚚 ${o.delivery_status}
-          </button>
-        </div>
-      </div>
-    `
-  })
-
-  return html
 }
-
 // =====================
 // DISPATCH
 // =====================
