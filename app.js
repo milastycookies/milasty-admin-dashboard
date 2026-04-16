@@ -246,6 +246,27 @@ function applyUIState(order) {
   }
 }
 
+// =====================
+// PRODUCT DEFINITIONS
+// =====================
+const PRODUCT_MAP = {
+  "Signature Trio Box": [
+    { name: "Cocoa Ragi", qty: 8 },
+    { name: "Cardamom Bajra", qty: 8 },
+    { name: "Coconut Jowar", qty: 8 }
+  ],
+  "Elegant Gifting Ritual": [
+    { name: "Cocoa Ragi", qty: 10 },
+    { name: "Cardamom Bajra", qty: 10 },
+    { name: "Coconut Jowar", qty: 10 }
+  ],
+  "Imperial Wedding Ritual": [
+    { name: "Cocoa Ragi", qty: 15 },
+    { name: "Cardamom Bajra", qty: 15 },
+    { name: "Coconut Jowar", qty: 15 }
+  ]
+}
+
 
 // =====================
 // PRODUCTION
