@@ -608,7 +608,7 @@ function renderOrders() {
 
 
 
-async function toggleCancel(id, current) {
+window.toggleCancel = async function (id, current){
   const isCancelled = current === "true"
 
   const confirmMsg = isCancelled
