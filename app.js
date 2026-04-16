@@ -588,7 +588,7 @@ function renderOrders() {
 
           <!-- 🔥 NEW CANCEL BUTTON -->
           <button class="status-btn ${cancelBtnClass}"
-            onclick="toggleCancel('${order.id}', ${isCancelled})">
+            onclick="toggleCancel('${order.id}', '${isCancelled}')">
             ${cancelBtnText}
           </button>
 
@@ -604,13 +604,15 @@ function renderOrders() {
 
 
 async function toggleCancel(id, current) {
-  const confirmMsg = current
+  const isCancelled = current === "true"
+
+  const confirmMsg = isCancelled
     ? "Undo cancellation?"
     : "Cancel this order?"
 
   if (!confirm(confirmMsg)) return
 
-  await updateStatus(id, "cancelled", null, !current)
+  await updateStatus(id, "cancelled", null, !isCancelled)
 }
 
 
