@@ -498,7 +498,9 @@ function renderOrders() {
       `${i.product_name} x${i.quantity}`
     ).join(", ")
 
-    // ✅ MOVE LOGIC HERE (OUTSIDE HTML)
+    // =====================
+    // STATUS CLASSES
+    // =====================
     const paymentClass =
       o.payment_status === "complete" ? "btn-paid" : "btn-pending"
 
@@ -509,14 +511,41 @@ function renderOrders() {
     if (o.delivery_status === "dispatched") deliveryClass = "btn-dispatched"
     if (o.delivery_status === "delivered") deliveryClass = "btn-delivered"
 
-    // ✅ ONLY HTML BELOW
+    // =====================
+    // CANCEL STATE
+    // =====================
+    const isCancelled = o.cancelled === true
+
+    const cancelBtnText = isCancelled ? "↩ Undo" : "❌ Cancel"
+    const cancelBtnClass = isCancelled ? "btn-not-prepared" : "btn-pending"
+
+    // =====================
+    // CARD STYLE (premium UX)
+    // =====================
+    const cardStyle = isCancelled
+      ? "opacity:0.5; text-decoration:line-through;"
+      : ""
+
+    // =====================
+    // HTML
+    // =====================
     html += `
-      <div class="card">
+      <div class="card" style="${cardStyle}">
+        
         <h4>${order.customers?.name || "Unknown"}</h4>
         <p>${items}</p>
         <p>₹${order.total_amount}</p>
 
-        <div style="margin-top:10px;">
+        ${
+          isCancelled
+            ? `<div style="color:#e11d48; font-size:12px; margin-top:6px;">
+                 ❌ Cancelled
+               </div>`
+            : ""
+        }
+
+        <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:6px;">
+          
           <button class="status-btn ${paymentClass}"
             onclick="updateStatus('${order.id}','payment_status', this)">
             💰 ${o.payment_status}
@@ -531,7 +560,15 @@ function renderOrders() {
             onclick="updateStatus('${order.id}','delivery_status', this)">
             🚚 ${o.delivery_status}
           </button>
+
+          <!-- 🔥 NEW CANCEL BUTTON -->
+          <button class="status-btn ${cancelBtnClass}"
+            onclick="toggleCancel('${order.id}', ${isCancelled})">
+            ${cancelBtnText}
+          </button>
+
         </div>
+
       </div>
     `
   })
@@ -540,6 +577,16 @@ function renderOrders() {
 }
 
 
+
+async function toggleCancel(id, current) {
+  const confirmMsg = current
+    ? "Undo cancellation?"
+    : "Cancel this order?"
+
+  if (!confirm(confirmMsg)) return
+
+  await updateStatus(id, "cancelled", null, !current)
+}
 
 
 // =====================
