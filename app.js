@@ -658,7 +658,10 @@ function renderDispatch() {
 // =====================
 function renderAnalytics() {
   let totalRevenue = 0
-  let totalOrders = filteredOrders.length
+  let totalOrders = filteredOrders.filter(order => {
+    const o = applyUIState(order)
+    return !o.cancelled
+  }).length
 
   const monthly = {}
   const weekly = {}
