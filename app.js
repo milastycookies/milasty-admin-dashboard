@@ -593,6 +593,7 @@ function renderOrders() {
 
           <!-- 🔥 NEW CANCEL BUTTON -->
           <button class="status-btn ${cancelBtnClass}"
+            style="margin-left:auto;"
             onclick="toggleCancel('${order.id}', '${isCancelled}')">
             ${cancelBtnText}
           </button>
