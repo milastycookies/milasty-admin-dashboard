@@ -867,6 +867,20 @@ function renderCharts() {
   const dailyRevenue = {}
 
   filteredOrders.forEach(order => {
+    const o = applyUIState(order)
+    if (o.cancelled) return
+  
+    const date = new Date(order.created_at)
+    let amount = Number(order.total_amount)
+  
+    if (o.payment_status === "refunded") {
+      amount = -amount
+    }
+  
+    if (o.payment_status !== "complete" && o.payment_status !== "refunded") {
+      return
+    }
+    
     const date = new Date(order.created_at)
     const amount = Number(order.total_amount)
 
