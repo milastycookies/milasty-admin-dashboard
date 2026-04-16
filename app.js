@@ -313,15 +313,12 @@ function renderProduction() {
         return
       }
 
-      const totalRatio = recipe.reduce((sum, f) => sum + f.ratio, 0)
-
       recipe.forEach(f => {
         if (!flavourTotals[f.name]) {
           flavourTotals[f.name] = 0
         }
-
-        const share = (f.ratio / totalRatio) * totalCookies
-        flavourTotals[f.name] += Math.round(share)
+      
+        flavourTotals[f.name] += f.qty * quantity
       })
     })
   })
