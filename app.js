@@ -369,6 +369,66 @@ function renderProduction() {
 
   return html
 }
+
+
+
+// =====================
+// ORDERS
+// =====================
+function renderOrders() {
+  let html = "<h3>Orders</h3>"
+
+  filteredOrders.forEach(order => {
+    const o = applyUIState(order)
+
+    const items = (order.order_items || []).map(i =>
+      `${i.product_name} x${i.quantity}`
+    ).join(", ")
+
+    // ✅ MOVE LOGIC HERE (OUTSIDE HTML)
+    const paymentClass =
+      o.payment_status === "complete" ? "btn-paid" : "btn-pending"
+
+    const productionClass =
+      o.production_status === "prepared" ? "btn-prepared" : "btn-not-prepared"
+
+    let deliveryClass = "btn-pending"
+    if (o.delivery_status === "dispatched") deliveryClass = "btn-dispatched"
+    if (o.delivery_status === "delivered") deliveryClass = "btn-delivered"
+
+    // ✅ ONLY HTML BELOW
+    html += `
+      <div class="card">
+        <h4>${order.customers?.name || "Unknown"}</h4>
+        <p>${items}</p>
+        <p>₹${order.total_amount}</p>
+
+        <div style="margin-top:10px;">
+          <button class="status-btn ${paymentClass}"
+            onclick="updateStatus('${order.id}','payment_status', this)">
+            💰 ${o.payment_status}
+          </button>
+
+          <button class="status-btn ${productionClass}"
+            onclick="updateStatus('${order.id}','production_status', this)">
+            🍪 ${o.production_status}
+          </button>
+
+          <button class="status-btn ${deliveryClass}"
+            onclick="updateStatus('${order.id}','delivery_status', this)">
+            🚚 ${o.delivery_status}
+          </button>
+        </div>
+      </div>
+    `
+  })
+
+  return html
+}
+
+
+
+
 // =====================
 // DISPATCH
 // =====================
