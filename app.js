@@ -834,6 +834,7 @@ function renderAnalytics() {
 
     <div class="card">
       <div style="font-size:12px;color:#777;">Refund %</div>
+      
       <div style="
         font-size:18px;
         font-weight:600;
@@ -844,6 +845,10 @@ function renderAnalytics() {
         };
       ">
         ${refundRate}%
+      </div>
+      
+      <div style="font-size:11px;color:#888;">
+        ₹${refunds} refunded
       </div>
     </div>
 
