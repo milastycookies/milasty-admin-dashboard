@@ -581,7 +581,11 @@ function renderOrders() {
           
           <button class="status-btn ${paymentClass}"
             onclick="updateStatus('${order.id}','payment_status', this)">
-            💰 ${o.payment_status}
+            ${
+              o.payment_status === "pending" ? "💰 pending" :
+              o.payment_status === "complete" ? "✅ paid" :
+              "↩️ refunded"
+            }
           </button>
 
           <button class="status-btn ${productionClass}"
