@@ -265,7 +265,12 @@ function applyUIState(order) {
     delivery_status:
       db.delivery_status ??
       local[String(order.id)]?.delivery_status ??
-      "pending"
+      "pending",
+
+    cancelled:
+      db.cancelled ??
+      local[String(order.id)]?.cancelled ??
+      false
   }
 }
 
