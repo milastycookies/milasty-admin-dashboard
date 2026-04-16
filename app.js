@@ -397,6 +397,7 @@ function renderProduction() {
       html += `
         <div style="
           background:${bg};
+          will-change: transform;
           border-radius:16px;
           padding:14px 16px;
           margin-bottom:12px;
@@ -404,7 +405,7 @@ function renderProduction() {
           justify-content:space-between;
           align-items:center;
           box-shadow:0 4px 12px rgba(0,0,0,0.05);
-        ">
+        " data-flavour="${flavour}">
           <div style="display:flex; align-items:center; gap:8px; font-size:15px;">
             
             <span style="
