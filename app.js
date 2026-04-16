@@ -250,31 +250,53 @@ function applyUIState(order) {
 // PRODUCTION
 // =====================
 function renderProduction() {
-  let totalCookies = 0
+  const flavourTotals = {}
 
   filteredOrders.forEach(order => {
     const o = applyUIState(order)
+
+    // Only NOT prepared
     if (o.production_status === "prepared") return
 
-    (order.order_items || []).forEach(item => {
+    ;(order.order_items || []).forEach(item => {
       const name = (item.product_name || "").toLowerCase()
-      let cookies = 0
 
+      // 👇 Detect flavour
+      let flavour = "Other"
+
+      if (name.includes("cocoa")) flavour = "Cocoa Ragi"
+      else if (name.includes("cardamom")) flavour = "Cardamom Bajra"
+      else if (name.includes("coconut")) flavour = "Coconut Jowar"
+
+      // 👇 Detect pack size
+      let cookies = 0
       if (name.includes("trial")) cookies = 6
       if (name.includes("regular")) cookies = 8
       if (name.includes("couple")) cookies = 10
       if (name.includes("family")) cookies = 15
 
-      totalCookies += cookies * item.quantity
+      if (!flavourTotals[flavour]) {
+        flavourTotals[flavour] = 0
+      }
+
+      flavourTotals[flavour] += cookies * item.quantity
     })
   })
 
-  return `
-    <h3>Production</h3>
-    <div class="card">🍪 Total Cookies: <b>${totalCookies}</b></div>
-  `
-}
+  // 🎯 UI
+  let html = `<h3>🍪 Production Required</h3>`
 
+  Object.entries(flavourTotals).forEach(([flavour, qty]) => {
+    html += `
+      <div class="card" style="display:flex; justify-content:space-between;">
+        <span>${flavour}</span>
+        <strong>${qty} cookies</strong>
+      </div>
+    `
+  })
+
+  return html
+}
 // =====================
 // ORDERS
 // =====================
