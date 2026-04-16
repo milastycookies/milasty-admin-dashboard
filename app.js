@@ -281,7 +281,7 @@ function renderProduction() {
 
     ;(order.order_items || []).forEach(item => {
       const name = (item.product_name || "").toLowerCase()
-      const product = item.product_name.trim()
+      const product = item.product_name.replace(/ x\d+$/i, "").trim()
       const quantity = Number(item.quantity)
 
       // =====================
