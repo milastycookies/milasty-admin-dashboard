@@ -416,9 +416,12 @@ function renderProduction() {
     
           <div style="
             font-weight:600;
-            font-size:16px;
+            font-size:14px;
+            background:#f3f4f6;
+            padding:6px 10px;
+            border-radius:10px;
           ">
-            ${qty}
+            ${qty} cookies
           </div>
         </div>
       `
