@@ -307,7 +307,10 @@ function renderProduction() {
             flavourOrders[f.name] = []
           }
           
-          flavourOrders[f.name].push(`${product} - ${quantity}`)
+          flavourOrders[f.name].push({
+            product,
+            quantity
+          })
         })
 
         return // 🔥 important
@@ -351,7 +354,10 @@ function renderProduction() {
         flavourOrders[flavour] = []
       }
       
-      flavourOrders[flavour].push(`${product} - ${quantity}`)
+      flavourOrders[flavour].push({
+        product,
+        quantity
+      })
     })
   })
 
@@ -447,12 +453,27 @@ function renderProduction() {
       
           <!-- 🔥 ORDER DETAILS (NEW) -->
           <div style="
-            margin-top:10px;
-            font-size:12px;
-            color:#666;
-            line-height:1.5;
+            margin-top:12px;
+            background:rgba(255,255,255,0.6);
+            border-radius:10px;
+            padding:8px 10px;
           ">
-            ${(flavourOrders[flavour] || []).join(" • ")}
+            ${(flavourOrders[flavour] || []).map(item => `
+              <div style="
+                display:flex;
+                justify-content:space-between;
+                padding:4px 0;
+                border-bottom:1px solid #eee;
+              ">
+                <span style="font-size:12px; color:#444;">
+                  ${item.product}
+                </span>
+          
+                <span style="font-size:12px; font-weight:600;">
+                  ${item.quantity}
+                </span>
+              </div>
+            `).join("")}
           </div>
       
         </div>
