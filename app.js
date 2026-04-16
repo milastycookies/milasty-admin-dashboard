@@ -145,7 +145,7 @@ function updateFilteredOrders() {
 // =====================
 // UPDATE STATUS
 // =====================
-window.updateStatus = async function (orderId, field, btn) {
+window.updateStatus = async function (orderId, field, btn, forceValue = null) {
   if (btn) btn.disabled = true
   document.body.style.pointerEvents = "none"
   orderId = String(orderId)
@@ -163,21 +163,40 @@ window.updateStatus = async function (orderId, field, btn) {
 
   let newValue
 
-  if (field === "payment_status") {
+  // =====================
+  // FORCE VALUE (for cancel)
+  // =====================
+  if (forceValue !== null) {
+    newValue = forceValue
+  }
+
+  // =====================
+  // EXISTING LOGIC
+  // =====================
+  else if (field === "payment_status") {
     newValue = current === "complete" ? "pending" : "complete"
   }
 
-  if (field === "production_status") {
+  else if (field === "production_status") {
     newValue = current === "prepared" ? "not_prepared" : "prepared"
   }
 
-  if (field === "delivery_status") {
+  else if (field === "delivery_status") {
     if (!current || current === "pending") newValue = "dispatched"
     else if (current === "dispatched") newValue = "delivered"
     else newValue = "pending"
   }
 
-  // Instant UI update
+  // =====================
+  // NEW: CANCEL LOGIC
+  // =====================
+  else if (field === "cancelled") {
+    newValue = current === true ? false : true
+  }
+
+  // =====================
+  // INSTANT UI UPDATE
+  // =====================
   if (!local[orderId]) local[orderId] = {}
   local[orderId][field] = newValue
 
@@ -185,10 +204,12 @@ window.updateStatus = async function (orderId, field, btn) {
   uiStateDB[orderId][field] = newValue
 
   saveLocalState(local)
+
   document.body.style.transition = "opacity 0.2s ease"
   document.body.style.opacity = "0.6"
+
   render()
-  lastRenderedHTML = "" // force re-render next cycle
+  lastRenderedHTML = ""
   lastRenderedTab = ""
 
   try {
@@ -216,8 +237,10 @@ window.updateStatus = async function (orderId, field, btn) {
 
   document.body.style.opacity = "1"
   document.body.style.pointerEvents = "auto"
+
   if (btn) btn.disabled = false
 }
+
 
 // =====================
 // APPLY STATE
@@ -277,6 +300,8 @@ function renderProduction() {
 
   filteredOrders.forEach(order => {
     const o = applyUIState(order)
+
+    if (o.cancelled) return
 
     if (o.production_status === "prepared") return
 
