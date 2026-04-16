@@ -246,6 +246,29 @@ function applyUIState(order) {
   }
 }
 
+
+// =====================
+// PRODUCT DEFINITIONS
+// =====================
+const PRODUCT_MAP = {
+  "Signature Trio Box": [
+    { name: "Cocoa Ragi", qty: 8 },
+    { name: "Cardamom Bajra", qty: 8 },
+    { name: "Coconut Jowar", qty: 8 }
+  ],
+  "Elegant Celebration Ritual": [
+    { name: "Cocoa Ragi", qty: 10 },
+    { name: "Cardamom Bajra", qty: 10 },
+    { name: "Coconut Jowar", qty: 10 }
+  ],
+  "Imperial Wedding Ritual": [
+    { name: "Cocoa Ragi", qty: 15 },
+    { name: "Cardamom Bajra", qty: 15 },
+    { name: "Coconut Jowar", qty: 15 }
+  ],
+}
+
+
 // =====================
 // PRODUCTION
 // =====================
@@ -260,31 +283,58 @@ function renderProduction() {
 
     ;(order.order_items || []).forEach(item => {
       const name = (item.product_name || "").toLowerCase()
+      const product = item.product_name.trim()
+      const quantity = Number(item.quantity)
 
-      // 👇 Detect flavour
-      let flavour = "Other"
+      // =====================
+      // PACK SIZE → total cookies
+      // =====================
+      let cookiesPerUnit = 0
 
-      if (name.includes("cocoa")) flavour = "Cocoa Ragi"
-      else if (name.includes("cardamom")) flavour = "Cardamom Bajra"
-      else if (name.includes("coconut")) flavour = "Coconut Jowar"
+      if (name.includes("trial")) cookiesPerUnit = 6
+      else if (name.includes("regular")) cookiesPerUnit = 8
+      else if (name.includes("couple")) cookiesPerUnit = 10
+      else if (name.includes("family")) cookiesPerUnit = 15
 
-      // 👇 Detect pack size
-      let cookies = 0
-      if (name.includes("trial")) cookies = 6
-      if (name.includes("regular")) cookies = 8
-      if (name.includes("couple")) cookies = 10
-      if (name.includes("family")) cookies = 15
+      // fallback for bundles (important)
+      else if (name.includes("signature")) cookiesPerUnit = 24
+      else if (name.includes("gifting")) cookiesPerUnit = 30
+      else if (name.includes("wedding")) cookiesPerUnit = 45
 
-      if (!flavourTotals[flavour]) {
-        flavourTotals[flavour] = 0
+      const totalCookies = cookiesPerUnit * quantity
+
+      // =====================
+      // FLAVOUR SPLIT
+      // =====================
+      const recipe = PRODUCT_MAP[product]
+
+      if (!recipe) {
+        console.warn("No product mapping:", product)
+        return
       }
 
-      flavourTotals[flavour] += cookies * item.quantity
+      const totalRatio = recipe.reduce((sum, f) => sum + f.ratio, 0)
+
+      recipe.forEach(f => {
+        if (!flavourTotals[f.name]) {
+          flavourTotals[f.name] = 0
+        }
+
+        const share = (f.ratio / totalRatio) * totalCookies
+        flavourTotals[f.name] += Math.round(share)
+      })
     })
   })
 
-  // 🎯 UI
+  // =====================
+  // UI
+  // =====================
   let html = `<h3>🍪 Production Required</h3>`
+
+  if (Object.keys(flavourTotals).length === 0) {
+    html += `<div class="card">No production required 🎉</div>`
+    return html
+  }
 
   Object.entries(flavourTotals).forEach(([flavour, qty]) => {
     html += `
@@ -296,8 +346,7 @@ function renderProduction() {
   })
 
   return html
-}
-// =====================
+}// =====================
 // ORDERS
 // =====================
 function renderOrders() {
