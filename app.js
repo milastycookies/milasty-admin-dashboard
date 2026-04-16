@@ -1055,9 +1055,14 @@ function renderCustomers() {
   const map = {}
 
   filteredOrders.forEach(order => {
+    const o = applyUIState(order)
+  
+    // ❌ ignore cancelled
+    if (o.cancelled) return
+  
     const phone = order.customers?.phone
     if (!phone) return
-
+  
     if (!map[phone]) {
       map[phone] = {
         name: order.customers?.name || "Unknown",
@@ -1066,9 +1071,21 @@ function renderCustomers() {
         spend: 0
       }
     }
-
+  
+    let amount = Number(order.total_amount)
+  
+    // ✅ apply refund logic
+    if (o.payment_status === "refunded") {
+      amount = -amount
+    }
+  
+    // ❌ ignore pending
+    if (o.payment_status !== "complete" && o.payment_status !== "refunded") {
+      return
+    }
+  
     map[phone].orders++
-    map[phone].spend += Number(order.total_amount)
+    map[phone].spend += amount
   })
 
   Object.values(map).forEach(c => {
