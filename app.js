@@ -347,25 +347,70 @@ function renderProduction() {
   // =====================
   // UI
   // =====================
-  let html = `<h3>🍪 Production Required</h3>`
-
-  if (Object.keys(flavourTotals).length === 0) {
-    html += `<div class="card">No production required 🎉</div>`
-    return html
-  }
-
-  const total = Object.values(flavourTotals).reduce((a,b)=>a+b,0)
-
-  html += `<div class="card"><b>Total: ${total} cookies</b></div>`
-
-  Object.entries(flavourTotals).forEach(([flavour, qty]) => {
+  let html = `
+      <div style="padding:16px;">
+        <h3 style="text-align:center; margin-bottom:16px;">
+          🍪 Production Required
+        </h3>
+    `
+    
+    if (Object.keys(flavourTotals).length === 0) {
+      html += `
+        <div class="card" style="text-align:center;">
+          No production required 🎉
+        </div>
+      `
+      return html
+    }
+    
+    const total = Object.values(flavourTotals).reduce((a,b)=>a+b,0)
+    
     html += `
-      <div class="card" style="display:flex; justify-content:space-between;">
-        <span>${flavour}</span>
-        <strong>${qty} cookies</strong>
+      <div style="
+        background:#000;
+        color:#fff;
+        border-radius:14px;
+        padding:14px;
+        text-align:center;
+        margin-bottom:16px;
+        font-weight:600;
+      ">
+        Total: ${total} cookies
       </div>
     `
-  })
+
+  Object.entries(flavourTotals).forEach(([flavour, qty]) => {
+
+      let emoji = "🍪"
+    
+      if (flavour === "Cocoa Ragi") emoji = "🍫"
+      else if (flavour === "Cardamom Bajra") emoji = "🌿"
+      else if (flavour === "Coconut Jowar") emoji = "🥥"
+    
+      html += `
+        <div style="
+          background:#fff;
+          border-radius:16px;
+          padding:14px 16px;
+          margin-bottom:12px;
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          box-shadow:0 4px 12px rgba(0,0,0,0.05);
+        ">
+          <div style="font-size:15px;">
+            ${emoji} ${flavour}
+          </div>
+    
+          <div style="
+            font-weight:600;
+            font-size:16px;
+          ">
+            ${qty}
+          </div>
+        </div>
+      `
+    })
 
   return html
 }
