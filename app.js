@@ -832,6 +832,22 @@ function renderAnalytics() {
       </div>
     </div>
 
+    <div class="card">
+      <div style="font-size:12px;color:#777;">Refund %</div>
+      <div style="
+        font-size:18px;
+        font-weight:600;
+        color:${
+          refundRate > 15 ? '#dc2626' : 
+          refundRate > 8 ? '#f59e0b' : 
+          '#16a34a'
+        };
+      ">
+        ${refundRate}%
+      </div>
+    </div>
+
+
     <!-- INSIGHTS -->
     <div class="card">
       <b>🔥 Insights</b><br><br>
