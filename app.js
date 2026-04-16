@@ -719,6 +719,8 @@ function renderAnalytics() {
   })
 
   totalRevenue = currentRevenue
+
+  const refundRate = gross ? Math.round((refunds / gross) * 100) : 0
   
   const growth = previousRevenue
     ? Math.round(((currentRevenue - previousRevenue) / previousRevenue) * 100)
