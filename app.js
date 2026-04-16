@@ -173,8 +173,10 @@ window.updateStatus = async function (orderId, field, btn, forceValue = null) {
   // =====================
   // EXISTING LOGIC
   // =====================
-  else if (field === "payment_status") {
-    newValue = current === "complete" ? "pending" : "complete"
+  if (field === "payment_status") {
+    if (current === "pending") newValue = "complete"
+    else if (current === "complete") newValue = "refunded"
+    else newValue = "pending"
   }
 
   else if (field === "production_status") {
