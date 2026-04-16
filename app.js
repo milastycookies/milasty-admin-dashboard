@@ -790,8 +790,11 @@ function renderAnalytics() {
     <!-- KPI CARDS -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
       <div class="card">
-        <div style="font-size:12px;color:#777;">Revenue</div>
+        <div style="font-size:12px;color:#777;">Net Revenue</div>
         <div style="font-size:18px;font-weight:600;">₹${totalRevenue}</div>
+        <div style="font-size:11px;color:#888;">
+          Gross: ₹${gross} • Refunds: ₹${refunds}
+        </div>
       </div>
 
       <div class="card">
