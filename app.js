@@ -881,8 +881,6 @@ function renderCharts() {
       return
     }
     
-    const date = new Date(order.created_at)
-    const amount = Number(order.total_amount)
 
     const month = date.toLocaleString("en-IN", {
       month: "short",
