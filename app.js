@@ -729,7 +729,17 @@ function renderAnalytics() {
     const o = applyUIState(order)
     if (o.cancelled) return
     const date = new Date(order.created_at)
-    const amount = Number(order.total_amount)
+    let amount = Number(order.total_amount)
+
+    // apply refund logic
+    if (o.payment_status === "refunded") {
+      amount = -amount
+    }
+    
+    // ignore pending orders
+    if (o.payment_status !== "complete" && o.payment_status !== "refunded") {
+      return
+    }
 
 
     // MONTH
