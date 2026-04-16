@@ -542,7 +542,7 @@ function renderOrders() {
     const isCancelled = o.cancelled === true
 
     const cancelBtnText = isCancelled ? "↩ Undo" : "❌ Cancel"
-    const cancelBtnClass = isCancelled ? "btn-not-prepared" : "btn-pending"
+    const cancelBtnClass = isCancelled ? "btn-prepared" : "btn-cancel"
 
     // =====================
     // CARD STYLE (premium UX)
