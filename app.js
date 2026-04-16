@@ -408,40 +408,53 @@ function renderProduction() {
       html += `
         <div style="
           background:${bg};
-          will-change: transform;
           border-radius:16px;
           padding:14px 16px;
           margin-bottom:12px;
-          display:flex;
-          justify-content:space-between;
-          align-items:center;
           box-shadow:0 4px 12px rgba(0,0,0,0.05);
-        " data-flavour="${flavour}">
-          <div style="display:flex; align-items:center; gap:8px; font-size:15px;">
+        ">
+      
+          <!-- TOP ROW -->
+          <div style="display:flex; justify-content:space-between; align-items:center;">
             
-            <span style="
-              font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
-              font-size:18px;
-              line-height:1;
+            <div style="display:flex; align-items:center; gap:8px; font-size:15px;">
+              
+              <span style="
+                font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
+                font-size:18px;
+                line-height:1;
+              ">
+                ${emoji}
+              </span>
+      
+              <span style="font-weight:500;">
+                ${flavour}
+              </span>
+      
+            </div>
+      
+            <div style="
+              font-weight:600;
+              font-size:14px;
+              background:#f3f4f6;
+              padding:6px 10px;
+              border-radius:10px;
             ">
-              ${emoji}
-            </span>
-          
-            <span style="font-weight:500;">
-              ${flavour}
-            </span>
-          
+              ${qty} cookies
+            </div>
+      
           </div>
-    
+      
+          <!-- 🔥 ORDER DETAILS (NEW) -->
           <div style="
-            font-weight:600;
-            font-size:14px;
-            background:#f3f4f6;
-            padding:6px 10px;
-            border-radius:10px;
+            margin-top:10px;
+            font-size:12px;
+            color:#666;
+            line-height:1.5;
           ">
-            ${qty} cookies
+            ${(flavourOrders[flavour] || []).join(" • ")}
           </div>
+      
         </div>
       `
     })
