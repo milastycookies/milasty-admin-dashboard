@@ -273,6 +273,7 @@ const PRODUCT_MAP = {
 // =====================
 function renderProduction() {
   const flavourTotals = {}
+  const flavourOrders = {} 
 
   filteredOrders.forEach(order => {
     const o = applyUIState(order)
@@ -302,6 +303,11 @@ function renderProduction() {
           }
 
           flavourTotals[f.name] += f.qty * quantity
+          if (!flavourOrders[f.name]) {
+            flavourOrders[f.name] = []
+          }
+          
+          flavourOrders[f.name].push(`${product} - ${quantity}`)
         })
 
         return // 🔥 important
@@ -341,6 +347,11 @@ function renderProduction() {
       }
 
       flavourTotals[flavour] += cookies * quantity
+      if (!flavourOrders[flavour]) {
+        flavourOrders[flavour] = []
+      }
+      
+      flavourOrders[flavour].push(`${product} - ${quantity}`)
     })
   })
 
