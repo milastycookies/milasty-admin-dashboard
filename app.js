@@ -398,8 +398,20 @@ function renderProduction() {
           align-items:center;
           box-shadow:0 4px 12px rgba(0,0,0,0.05);
         ">
-          <div style="font-size:15px;">
-            ${emoji} ${flavour}
+          <div style="display:flex; align-items:center; gap:8px; font-size:15px;">
+            
+            <span style="
+              font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
+              font-size:18px;
+              line-height:1;
+            ">
+              ${emoji}
+            </span>
+          
+            <span style="font-weight:500;">
+              ${flavour}
+            </span>
+          
           </div>
     
           <div style="
