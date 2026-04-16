@@ -533,8 +533,9 @@ function renderOrders() {
     // =====================
     // STATUS CLASSES
     // =====================
-    const paymentClass =
-      o.payment_status === "complete" ? "btn-paid" : "btn-pending"
+    let paymentClass = "btn-pending"
+    if (o.payment_status === "complete") paymentClass = "btn-paid"
+    if (o.payment_status === "refunded") paymentClass = "btn-refunded"
 
     const productionClass =
       o.production_status === "prepared" ? "btn-prepared" : "btn-not-prepared"
