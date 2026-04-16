@@ -678,8 +678,42 @@ function renderAnalytics() {
   let currentRevenue = 0
   let previousRevenue = 0
   
-  filteredOrders.forEach(o => currentRevenue += Number(o.total_amount))
-  previousOrders.forEach(o => previousRevenue += Number(o.total_amount))
+  let gross = 0
+  let refunds = 0
+  
+  filteredOrders.forEach(order => {
+    const o = applyUIState(order)
+  
+    if (o.cancelled) return
+  
+    const amount = Number(order.total_amount)
+  
+    if (o.payment_status === "complete") {
+      gross += amount
+      currentRevenue += amount
+    }
+  
+    else if (o.payment_status === "refunded") {
+      refunds += amount
+      currentRevenue -= amount
+    }
+  })
+  
+  previousOrders.forEach(order => {
+    const o = applyUIState(order)
+  
+    if (o.cancelled) return
+  
+    const amount = Number(order.total_amount)
+  
+    if (o.payment_status === "complete") {
+      previousRevenue += amount
+    }
+  
+    else if (o.payment_status === "refunded") {
+      previousRevenue -= amount
+    }
+  })
 
   totalRevenue = currentRevenue
   
