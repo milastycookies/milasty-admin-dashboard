@@ -1088,7 +1088,9 @@ function renderCustomers() {
     map[phone].spend += amount
   })
 
-  Object.values(map).forEach(c => {
+  const sortedCustomers = Object.values(map).sort((a, b) => b.spend - a.spend)
+
+  sortedCustomers.forEach(c => {
     html += `
       <div class="card">
         <h4>${c.name}</h4>
