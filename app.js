@@ -386,10 +386,17 @@ function renderProduction() {
       if (flavour === "Cocoa Ragi") emoji = "🍫"
       else if (flavour === "Cardamom Bajra") emoji = "🌿"
       else if (flavour === "Coconut Jowar") emoji = "🥥"
+
+
+      let bg = "#fff"
+    
+      if (flavour === "Cocoa Ragi") bg = "#fdf6f3"
+      else if (flavour === "Cardamom Bajra") bg = "#f3fdf5"
+      else if (flavour === "Coconut Jowar") bg = "#f8f8f8"
     
       html += `
         <div style="
-          background:#fff;
+          background:${bg};
           border-radius:16px;
           padding:14px 16px;
           margin-bottom:12px;
