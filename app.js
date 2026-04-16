@@ -287,7 +287,13 @@ function renderProduction() {
       // =====================
       // CASE 1: BUNDLES
       // =====================
-      const recipe = PRODUCT_MAP[product]
+      const normalizedProduct = product.toLowerCase()
+      
+      const recipeKey = Object.keys(PRODUCT_MAP).find(p =>
+        normalizedProduct.includes(p.toLowerCase())
+      )
+      
+      const recipe = recipeKey ? PRODUCT_MAP[recipeKey] : null
 
       if (recipe) {
         recipe.forEach(f => {
