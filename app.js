@@ -1364,7 +1364,8 @@ function renderCustomers() {
         name: order.customers?.name || "Unknown",
         phone,
         orders: 0,
-        spend: 0
+        spend: 0,
+        lastOrder: null   // ✅ NEW
       }
     }
   
@@ -1382,6 +1383,11 @@ function renderCustomers() {
   
     map[phone].orders++
     map[phone].spend += amount
+
+    const orderDate = new Date(order.created_at)
+    if (!map[phone].lastOrder || orderDate > map[phone].lastOrder) {
+      map[phone].lastOrder = orderDate
+    }
   })
 
   const sortedCustomers = Object.values(map).sort((a, b) => b.spend - a.spend)
@@ -1395,29 +1401,56 @@ function renderCustomers() {
   
     const isTop = index < 3
   
-    html += `
-      <div class="customer-card ${isTop ? "top" : ""}">
-        
-        <div class="customer-left">
-          <div class="avatar">${initials}</div>
-          
-          <div>
-            <h4>${c.name}</h4>
-            <p class="phone">${c.phone}</p>
-          </div>
-        </div>
-  
-        <div class="customer-right">
-          <p class="orders">${c.orders} orders</p>
-          <p class="spend">₹${c.spend}</p>
-        </div>
-  
-      </div>
-    `
-  })
+    sortedCustomers.forEach((c, index) => {
+  const initials = c.name
+    .split(" ")
+    .map(w => w[0])
+    .join("")
+    .toUpperCase()
 
-  return html
-}
+  const isTop = index < 3
+
+  const repeatPercent = c.orders > 1 
+    ? Math.round(((c.orders - 1) / c.orders) * 100) 
+    : 0
+
+  const lastDate = c.lastOrder
+    ? new Date(c.lastOrder).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short"
+      })
+    : "-"
+
+  const phoneClean = c.phone.replace(/\D/g, "")
+  const whatsappLink = `https://wa.me/${phoneClean}`
+
+  html += `
+    <div class="customer-card ${isTop ? "top" : ""}">
+      
+      <div class="customer-left">
+        <div class="avatar">${initials}</div>
+        
+        <div>
+          <h4>${c.name}</h4>
+          <p class="phone">${c.phone}</p>
+          <p class="last">Last order: ${lastDate}</p>
+        </div>
+      </div>
+
+      <div class="customer-right">
+        <p class="spend">₹${c.spend}</p>
+        <p class="orders">${c.orders} orders • ${repeatPercent}% repeat</p>
+
+        <a href="${whatsappLink}" target="_blank" class="wa-btn">
+          💬 WhatsApp
+        </a>
+      </div>
+
+    </div>
+  `
+})
+    `
+
 
 // =====================
 // NAVIGATION
