@@ -255,7 +255,10 @@ window.handleDispatch = async function(orderId) {
 
   const res = await fetch(`${API_BASE}/update-order`, {
     method: "POST",
-    headers: { ... },
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem("token")}`
+    },
     body: JSON.stringify({
       id: orderId,
       field: "tracking_id",
