@@ -159,3 +159,294 @@ export function renderProduction() {
 
   return html
 }
+
+
+// =====================
+// ORDERS
+// =====================
+export function renderOrders() {
+  let html = "<h3>Orders</h3>"
+
+  filteredOrders.forEach(order => {
+    const o = applyUIState(order)
+
+    const items = (order.order_items || []).map(i =>
+      `${i.product_name} x${i.quantity}`
+    ).join(", ")
+
+    // =====================
+    // STATUS CLASSES
+    // =====================
+    let paymentClass = "btn-pending"
+    if (o.payment_status === "complete") paymentClass = "btn-paid"
+    if (o.payment_status === "refunded") paymentClass = "btn-refunded"
+
+    const productionClass =
+      o.production_status === "prepared" ? "btn-prepared" : "btn-not-prepared"
+
+    let deliveryClass = "btn-pending"
+    if (o.delivery_status === "dispatched") deliveryClass = "btn-dispatched"
+    if (o.delivery_status === "delivered") deliveryClass = "btn-delivered"
+
+    // =====================
+    // CANCEL STATE
+    // =====================
+    const isCancelled = o.cancelled === true
+
+    const cancelBtnText = isCancelled ? "↩ Undo" : "❌ Cancel"
+    const cancelBtnClass = isCancelled ? "btn-prepared" : "btn-cancel"
+
+    // =====================
+    // CARD STYLE
+    // =====================
+    const cardStyle = isCancelled
+      ? "opacity:0.5; text-decoration:line-through;"
+      : ""
+
+    html += `
+      <div class="card" style="${cardStyle}">
+        
+        <h4>${order.customers?.name || "Unknown"}</h4>
+        <p>${items}</p>
+        <p>₹${order.total_amount}</p>
+
+        ${
+          isCancelled
+            ? `<div style="color:#e11d48; font-size:12px; margin-top:6px;">
+                 ❌ Cancelled
+               </div>`
+            : ""
+        }
+
+        <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:6px;">
+          
+          <button class="status-btn ${paymentClass}"
+            onclick="window._actions.updateStatus('${order.id}','payment_status', window._render, this)">
+            ${
+              o.payment_status === "pending" ? "💰 pending" :
+              o.payment_status === "complete" ? "✅ paid" :
+              "↩️ refunded"
+            }
+          </button>
+
+          <button class="status-btn ${productionClass}"
+            onclick="window._actions.updateStatus('${order.id}','production_status', window._render, this)">
+            🍪 ${o.production_status}
+          </button>
+
+          <button class="status-btn ${deliveryClass}"
+            onclick="window._actions.updateStatus('${order.id}','delivery_status', window._render, this)">
+            🚚 ${o.delivery_status}
+          </button>
+
+          <button class="status-btn ${cancelBtnClass}"
+            style="margin-left:auto;"
+            onclick="window._actions.toggleCancel('${order.id}', '${isCancelled}', window._render)">
+            ${cancelBtnText}
+          </button>
+
+        </div>
+
+      </div>
+    `
+  })
+
+  return html
+}
+
+
+// =====================
+// DISPATCH
+// =====================
+export function renderDispatch() {
+  let html = `
+    <div style="padding:12px;">
+      <h3 style="text-align:center; margin-bottom:16px;">
+        📦 Shipping Control
+      </h3>
+  `
+
+  const ready = []
+  const shipped = []
+  const delivered = []
+
+  filteredOrders.forEach(order => {
+    const o = applyUIState(order)
+
+    if (o.cancelled) return
+
+    if (o.production_status === "prepared" && o.delivery_status === "pending") {
+      ready.push({ order, o })
+    }
+    else if (o.delivery_status === "dispatched") {
+      shipped.push({ order, o })
+    }
+    else if (o.delivery_status === "delivered") {
+      delivered.push({ order, o })
+    }
+  })
+
+  ready.sort((a, b) => new Date(a.order.created_at) - new Date(b.order.created_at))
+  shipped.sort((a, b) => new Date(a.order.created_at) - new Date(b.order.created_at))
+  delivered.sort((a, b) => new Date(a.order.created_at) - new Date(b.order.created_at))
+
+  // =====================
+  // READY TO SHIP
+  // =====================
+  html += `<h4 style="margin-top:16px;">🟡 Ready to Ship</h4>`
+
+  if (ready.length === 0) {
+    html += `<div class="card">No orders ready</div>`
+  }
+
+  ready.forEach(({ order, o }) => {
+    const phone = order.customers?.phone || ""
+    const name = order.customers?.name || "Customer"
+
+    html += `
+      <div class="card">
+
+        <h4>${name}</h4>
+        <p>${phone}</p>
+
+        <input 
+          id="track-${order.id}" 
+          value="${o.tracking_id || ''}"
+          placeholder="Enter Tracking ID"
+          style="width:100%; padding:8px; margin:6px 0; border-radius:8px; border:1px solid #ddd;"
+        />
+
+        <button 
+          onclick="window._actions.handleDispatch('${order.id}', window._render)"
+          ${o.tracking_id ? "disabled" : ""}
+        >
+          ${o.tracking_id ? "✅ Dispatched" : "🚚 Dispatch"}
+        </button>
+
+        <button 
+          onclick="window._actions.sendWhatsApp('${order.id}', '${phone}', '${name}')"
+          ${!o.tracking_id ? "disabled" : ""}
+          style="background:#25D366; color:white; margin-left:6px;">
+          📲 WhatsApp
+        </button>
+
+      </div>
+    `
+  })
+
+  // =====================
+  // IN TRANSIT
+  // =====================
+  html += `<h4 style="margin-top:20px;font-size:14px;color:#666;font-weight:500;">
+    🚚 In Transit
+  </h4>`
+
+  if (shipped.length === 0) {
+    html += `<div class="card">No active shipments</div>`
+  }
+
+  shipped.forEach(({ order, o }) => {
+    const days = order.dispatched_at
+      ? (Date.now() - new Date(order.dispatched_at)) / (1000 * 60 * 60 * 24)
+      : 0
+
+    const isDelayed = days > 5
+
+    const cardStyle = isDelayed
+      ? "border:2px solid #dc2626; background:#fff7f7;"
+      : ""
+
+    const phone = order.customers?.phone || ""
+    const name = order.customers?.name || "Customer"
+
+    html += `
+      <div class="card" style="${cardStyle}">
+
+        <div style="font-weight:600; font-size:15px;">
+          ${name}
+        </div>
+
+        ${isDelayed 
+          ? `<div style="color:#dc2626; font-size:12px; font-weight:600;">
+               🚨 Delayed (${Math.floor(days)} days)
+             </div>`
+          : ""
+        }
+
+        <div style="font-size:12px; color:#888;">
+          ${phone}
+        </div>
+
+        <div style="background:#fafafa;border-radius:14px;padding:12px;margin-top:10px;border:1px solid #eee;">
+        
+          <div style="font-size:13px; color:#16a34a;">
+            📦 ${o.tracking_id || "N/A"}
+          </div>
+        
+          <div style="font-size:11px;color:#888;">
+            Dispatched: ${
+              order.dispatched_at
+                ? new Date(order.dispatched_at).toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "short"
+                  })
+                : "-"
+            }
+          </div>
+        
+          ${
+            order.dispatched_at
+              ? `<div style="font-size:11px;color:#aaa;">
+                   ${Math.floor((Date.now() - new Date(order.dispatched_at)) / (1000*60*60*24))} days in transit
+                 </div>`
+              : ""
+          }
+        
+          <div style="display:flex; gap:8px; margin-top:10px;">
+            <button class="mini-btn" 
+              onclick="window._actions.copyTracking('${o.tracking_id || ""}')">
+              📋 Copy
+            </button>
+            
+            <button class="mini-btn" 
+              onclick="window._actions.openTracking('${o.tracking_id}')">
+              🔗 Track
+            </button>
+          </div>
+        
+        </div>
+      </div>
+    `
+  })
+
+  // =====================
+  // DELIVERED
+  // =====================
+  html += `<h4 style="margin-top:20px;">✅ Delivered</h4>`
+
+  if (delivered.length === 0) {
+    html += `<div class="card">No delivered orders</div>`
+  }
+
+  delivered.forEach(({ order, o }) => {
+    const name = order.customers?.name || "Customer"
+
+    html += `
+      <div class="card" style="opacity:0.7;">
+        <h4>${name}</h4>
+
+        <div style="font-size:12px; color:green;">
+          ✅ Delivered
+        </div>
+
+        ${
+          o.tracking_id
+            ? `<div style="font-size:12px;">📦 ${o.tracking_id}</div>`
+            : ""
+        }
+      </div>
+    `
+  })
+
+  return html
+}
