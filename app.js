@@ -164,29 +164,34 @@ window.updateStatus = async function (orderId, field, btn, forceValue = null) {
   let newValue
 
   // =====================
-  // FORCE VALUE (for cancel)
+  // FORCE VALUE (important fix)
   // =====================
   if (forceValue !== null) {
     newValue = forceValue
-  }
-
-  // =====================
-  // EXISTING LOGIC
-  // =====================
-  if (field === "payment_status") {
-    if (current === "pending") newValue = "complete"
-    else if (current === "complete") newValue = "refunded"
-    else newValue = "pending"
-  }
-
-  else if (field === "production_status") {
-    newValue = current === "prepared" ? "not_prepared" : "prepared"
-  }
-
-  else if (field === "delivery_status") {
-    if (!current || current === "pending") newValue = "dispatched"
-    else if (current === "dispatched") newValue = "delivered"
-    else newValue = "pending"
+  } else {
+  
+    // =====================
+    // EXISTING LOGIC
+    // =====================
+    if (field === "payment_status") {
+      if (current === "pending") newValue = "complete"
+      else if (current === "complete") newValue = "refunded"
+      else newValue = "pending"
+    }
+  
+    else if (field === "production_status") {
+      newValue = current === "prepared" ? "not_prepared" : "prepared"
+    }
+  
+    else if (field === "delivery_status") {
+      if (!current || current === "pending") newValue = "dispatched"
+      else if (current === "dispatched") newValue = "delivered"
+      else newValue = "pending"
+    }
+  
+    else if (field === "cancelled") {
+      newValue = current === true ? false : true
+    }
   }
 
   // =====================
