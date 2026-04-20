@@ -29,9 +29,6 @@ export function render() {
   const app = document.getElementById("app")
   if (!app) return
 
-  // =====================
-  // LOADING STATE
-  // =====================
   if (isLoading) {
     app.innerHTML = `
       <div style="padding:20px;text-align:center;">
@@ -41,36 +38,28 @@ export function render() {
     return
   }
 
-  // =====================
-  // TAB RENDERING
-  // =====================
   let content = ""
 
   if (currentTab === "production") {
     content = ui.renderProduction()
   }
-
   else if (currentTab === "orders") {
     content = ui.renderOrders()
   }
-
   else if (currentTab === "dispatch") {
     content = ui.renderDispatch()
   }
-
   else if (currentTab === "analytics") {
     content = ui.renderAnalytics()
   }
-
   else if (currentTab === "customers") {
     content = ui.renderCustomers()
   }
 
- 
+  // 🔥 THIS LINE WAS MISSING
+  app.innerHTML = content
 
-  // =====================
-  // POST RENDER (Charts)
-  // =====================
+  // Charts after render
   if (currentTab === "analytics") {
     setTimeout(() => {
       ui.renderCharts()
