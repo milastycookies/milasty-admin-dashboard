@@ -756,7 +756,7 @@ function renderDispatch() {
           🚚 Dispatch
         </button>
 
-        <button onclick="sendWhatsApp('${order.id}', '${phone}', '${name}', '${trackingId}')"
+        <button onclick="sendWhatsApp('${order.id}', '${phone}', '${name}')"
           style="background:#25D366; color:white; margin-left:6px;">
           📲 WhatsApp
         </button>
