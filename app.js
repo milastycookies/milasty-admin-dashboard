@@ -758,6 +758,10 @@ function renderDispatch() {
     }
   })
 
+  ready.sort((a, b) => new Date(a.order.created_at) - new Date(b.order.created_at))
+  shipped.sort((a, b) => new Date(a.order.created_at) - new Date(b.order.created_at))
+  delivered.sort((a, b) => new Date(a.order.created_at) - new Date(b.order.created_at))
+  
   // =====================
   // 🟡 READY TO SHIP
   // =====================
