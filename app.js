@@ -304,15 +304,15 @@ window.sendWhatsApp = function(orderId, phone, name, trackingFromState = null) {
 
   const message = `Hi ${name},
 
-Your MILASTY order has been shipped 🚚
-
-Tracking ID: ${trackingId}
-
-Track here:
-https://shiprocket.co/tracking/${trackingId}
-
-Thank you ❤️`
-
+  Your MILASTY order has been shipped 🚚
+  
+  Tracking ID: ${trackingId}
+  
+  Track here:
+  https://shiprocket.co/tracking/${trackingId}
+  
+  Thank you ❤️`
+  
   const encoded = encodeURIComponent(message)
 
   const win = window.open(`https://wa.me/91${cleanPhone}?text=${encoded}`, "_blank")
