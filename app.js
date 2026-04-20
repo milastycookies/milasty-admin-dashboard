@@ -1386,13 +1386,32 @@ function renderCustomers() {
 
   const sortedCustomers = Object.values(map).sort((a, b) => b.spend - a.spend)
 
-  sortedCustomers.forEach(c => {
+  sortedCustomers.forEach((c, index) => {
+    const initials = c.name
+      .split(" ")
+      .map(w => w[0])
+      .join("")
+      .toUpperCase()
+  
+    const isTop = index < 3
+  
     html += `
-      <div class="card">
-        <h4>${c.name}</h4>
-        <p>${c.phone}</p>
-        <p>Orders: ${c.orders}</p>
-        <p>₹${c.spend}</p>
+      <div class="customer-card ${isTop ? "top" : ""}">
+        
+        <div class="customer-left">
+          <div class="avatar">${initials}</div>
+          
+          <div>
+            <h4>${c.name}</h4>
+            <p class="phone">${c.phone}</p>
+          </div>
+        </div>
+  
+        <div class="customer-right">
+          <p class="orders">${c.orders} orders</p>
+          <p class="spend">₹${c.spend}</p>
+        </div>
+  
       </div>
     `
   })
