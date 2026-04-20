@@ -163,16 +163,10 @@ window.updateStatus = async function (orderId, field, btn, forceValue = null) {
 
   let newValue
 
-  // =====================
-  // FORCE VALUE (important fix)
-  // =====================
   if (forceValue !== null) {
     newValue = forceValue
   } else {
   
-    // =====================
-    // EXISTING LOGIC
-    // =====================
     if (field === "payment_status") {
       if (current === "pending") newValue = "complete"
       else if (current === "complete") newValue = "refunded"
@@ -193,14 +187,6 @@ window.updateStatus = async function (orderId, field, btn, forceValue = null) {
       newValue = current === true ? false : true
     }
   }
-
-  // =====================
-  // NEW: CANCEL LOGIC
-  // =====================
-  else if (field === "cancelled") {
-    newValue = current === true ? false : true
-  }
-
   // =====================
   // INSTANT UI UPDATE
   // =====================
