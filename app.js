@@ -329,7 +329,11 @@ function applyUIState(order) {
 
   return {
     ...order,
-    tracking_id: order.tracking_id,
+    tracking_id:
+      order.tracking_id ??
+      db.tracking_id ??
+      local[String(order.id)]?.tracking_id ??
+      "",
     
     payment_status:
       db.payment_status ??
