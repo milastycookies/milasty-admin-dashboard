@@ -808,6 +808,9 @@ function renderDispatch() {
           <button onclick="copyTracking('${o.tracking_id || ""}')">
             📋 Copy
           </button>
+          <button onclick="openTracking('${o.tracking_id}')">
+            🔗 Track
+          </button>
         </div>
 
         <div style="margin-top:10px;">
