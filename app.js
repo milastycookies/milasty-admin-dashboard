@@ -798,7 +798,7 @@ function renderDispatch() {
             ✅ Mark Delivered
           </button>
 
-          <button onclick="sendWhatsApp('${order.id}', '${phone}', '${name}')"
+          <button onclick="sendWhatsApp('${order.id}', '${phone}', '${name}', '${o.tracking_id}')"
             style="background:#25D366; color:white; margin-left:6px;">
             📲 Resend
           </button>
