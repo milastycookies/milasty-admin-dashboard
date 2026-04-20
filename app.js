@@ -844,6 +844,17 @@ function renderDispatch() {
             📦 ${o.tracking_id || "N/A"}
           </span>
 
+          <div style="font-size:11px;color:#777;">
+            Dispatched: ${
+              order.dispatched_at
+                ? `<div style="font-size:11px;color:#999;">
+                     ${Math.floor((Date.now() - new Date(order.dispatched_at)) / (1000*60*60*24))} days in transit
+                   </div>`
+                : ""
+            }
+          </div>
+
+
           <button onclick="copyTracking('${o.tracking_id || ""}')">
             📋 Copy
           </button>
