@@ -823,13 +823,30 @@ function renderDispatch() {
   }
 
   shipped.forEach(({ order, o }) => {
+    const days = order.dispatched_at
+      ? (Date.now() - new Date(order.dispatched_at)) / (1000 * 60 * 60 * 24)
+      : 0
+    
+    const isDelayed = days > 5
+
+    const cardStyle = isDelayed
+      ? "border:2px solid #dc2626; background:#fff7f7;"
+      : ""
+    
     const phone = order.customers?.phone || ""
     const name = order.customers?.name || "Customer"
 
     html += `
-      <div class="card">
+      <div class="card" style="${cardStyle}">
 
         <h4>${name}</h4>
+        ${isDelayed 
+          ? `<div style="color:#dc2626; font-size:12px; font-weight:600;">
+               🚨 Delayed (${Math.floor(days)} days)
+             </div>`
+          : ""
+        }
+
         <p>${phone}</p>
 
         <div style="
