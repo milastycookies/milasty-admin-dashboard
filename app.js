@@ -802,7 +802,9 @@ function renderDispatch() {
           ${o.tracking_id ? "✅ Dispatched" : "🚚 Dispatch"}
         </button>
 
-        <button onclick="sendWhatsApp('${order.id}', '${phone}', '${name}')"
+        <button 
+          onclick="sendWhatsApp('${order.id}', '${phone}', '${name}')"
+          ${!o.tracking_id ? "disabled" : ""}
           style="background:#25D366; color:white; margin-left:6px;">
           📲 WhatsApp
         </button>
