@@ -273,37 +273,45 @@ window.handleDispatch = async function(orderId) {
 // =====================
 // WhatsApp Auto Message
 // =====================
-window.sendWhatsApp = function(orderId, phone, name) {
+window.sendWhatsApp = function(orderId, phone, name, trackingFromState = null) {
 
-  const input = document.getElementById(`track-${orderId}`)
-  const trackingId = input.value.trim()
+  let trackingId = ""
+
+  // 1. Try from state (In Transit / Delivered)
+  if (trackingFromState) {
+    trackingId = trackingFromState
+  }
+
+  // 2. Else try input (Ready to Ship)
+  else {
+    const input = document.getElementById(`track-${orderId}`)
+    if (input) {
+      trackingId = input.value.trim()
+    }
+  }
 
   if (!trackingId) {
-    alert("Enter tracking ID first")
+    alert("Tracking ID missing")
     return
   }
 
-  const message = `
-Hi ${name},
+  const cleanPhone = phone.replace(/\D/g, "")
+
+  const message = `Hi ${name},
 
 Your MILASTY order has been shipped 🚚
 
 Tracking ID: ${trackingId}
 
-You can track your order here:
+Track here:
 https://shiprocket.co/tracking/${trackingId}
 
-Thank you for choosing MILASTY ❤️
-  `
+Thank you ❤️`
 
   const encoded = encodeURIComponent(message)
 
-  // clean phone (important for India)
-  const cleanPhone = phone.replace(/\D/g, "")
-
   window.open(`https://wa.me/91${cleanPhone}?text=${encoded}`, "_blank")
 }
-
 // =====================
 // APPLY STATE
 // =====================
