@@ -816,7 +816,15 @@ function renderDispatch() {
   // =====================
   // 🚚 IN TRANSIT
   // =====================
-  html += `<h4 style="margin-top:20px;">🚚 In Transit</h4>`
+  html += `<h4 style="
+          margin-top:20px;
+          font-size:14px;
+          color:#666;
+          font-weight:500;
+          letter-spacing:0.4px;
+        ">
+          🚚 In Transit
+        </h4>`
 
   if (shipped.length === 0) {
     html += `<div class="card">No active shipments</div>`
@@ -839,7 +847,9 @@ function renderDispatch() {
     html += `
       <div class="card" style="${cardStyle}">
 
-        <h4>${name}</h4>
+        <div style="font-weight:600; font-size:15px;">
+          ${name}
+        </div>
         ${isDelayed 
           ? `<div style="color:#dc2626; font-size:12px; font-weight:600;">
                🚨 Delayed (${Math.floor(days)} days)
@@ -847,24 +857,23 @@ function renderDispatch() {
           : ""
         }
 
-        <p>${phone}</p>
+        <div style="font-size:12px; color:#888; margin-top:2px;">
+          ${phone}
+        </div>
 
         <div style="
-          display:flex;
-          flex-direction:column;
-          gap:4px;
-          background:#f3f4f6;
-          padding:8px 10px;
-          border-radius:8px;
+          background:#fafafa;
+          border-radius:14px;
+          padding:12px;
+          margin-top:10px;
+          border:1px solid #eee;
         ">
         
-          <!-- Tracking -->
-          <span style="font-size:12px; color:#16a34a;">
+          <div style="font-size:13px; color:#16a34a; font-weight:500;">
             📦 ${o.tracking_id || "N/A"}
-          </span>
+          </div>
         
-          <!-- Dispatched Date -->
-          <div style="font-size:11px;color:#777;">
+          <div style="font-size:11px;color:#888;margin-top:4px;">
             Dispatched: ${
               order.dispatched_at
                 ? new Date(order.dispatched_at).toLocaleDateString("en-IN", {
@@ -875,23 +884,17 @@ function renderDispatch() {
             }
           </div>
         
-          <!-- Days in Transit -->
           ${
             order.dispatched_at
-              ? `<div style="font-size:11px;color:#999;">
+              ? `<div style="font-size:11px;color:#aaa;">
                    ${Math.floor((Date.now() - new Date(order.dispatched_at)) / (1000*60*60*24))} days in transit
                  </div>`
               : ""
           }
         
-          <!-- Buttons -->
-          <div style="display:flex; gap:6px; margin-top:4px;">
-            <button onclick="copyTracking('${o.tracking_id || ""}')">
-              📋 Copy
-            </button>
-            <button onclick="openTracking('${o.tracking_id}')">
-              🔗 Track
-            </button>
+          <div style="display:flex; gap:8px; margin-top:10px;">
+            <button class="mini-btn">📋 Copy</button>
+            <button class="mini-btn">🔗 Track</button>
           </div>
         
         </div>
