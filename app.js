@@ -361,6 +361,22 @@ window.openTracking = function(id) {
 }
 
 
+// =====================
+// COPY TRACKING
+// =====================
+window.copyTracking = function(trackingId) {
+  if (!trackingId) {
+    alert("No tracking ID")
+    return
+  }
+
+  navigator.clipboard.writeText(trackingId)
+
+  // simple feedback
+  alert("Tracking ID copied ✅")
+}
+
+
 
 // =====================
 // PRODUCT DEFINITIONS
