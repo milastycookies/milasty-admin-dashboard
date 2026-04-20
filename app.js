@@ -898,8 +898,19 @@ function renderDispatch() {
           }
         
           <div style="display:flex; gap:8px; margin-top:10px;">
-            <button class="mini-btn">📋 Copy</button>
-            <button class="mini-btn">🔗 Track</button>
+            <button 
+              class="mini-btn" 
+              onclick="copyTracking('${o.tracking_id || ""}')"
+            >
+              📋 Copy
+            </button>
+            
+            <button 
+              class="mini-btn" 
+              onclick="openTracking('${o.tracking_id}')"
+            >
+              🔗 Track
+            </button>
           </div>
         
         </div>
