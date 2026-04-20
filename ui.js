@@ -450,3 +450,346 @@ export function renderDispatch() {
 
   return html
 }
+
+
+
+// =====================
+// ANALYTICS
+// =====================
+export function renderAnalytics() {
+  let totalRevenue = 0
+
+  let totalOrders = filteredOrders.filter(order => {
+    const o = applyUIState(order)
+    return !o.cancelled
+  }).length
+
+  const monthly = {}
+  const weekly = {}
+  const skuMap = {}
+  const dailyRevenue = {}
+  const repeatCustomers = {}
+
+  const now = new Date()
+
+  const previousOrders = ordersData.filter(order => {
+    const date = new Date(order.created_at)
+    const diff = (now - date) / (1000 * 60 * 60 * 24)
+    return diff > analyticsRange && diff <= analyticsRange * 2
+  })
+
+  let currentRevenue = 0
+  let previousRevenue = 0
+  let gross = 0
+  let refunds = 0
+
+  filteredOrders.forEach(order => {
+    const o = applyUIState(order)
+
+    if (o.cancelled) return
+
+    const amount = Number(order.total_amount)
+
+    if (o.payment_status === "complete") {
+      gross += amount
+      currentRevenue += amount
+    }
+    else if (o.payment_status === "refunded") {
+      refunds += amount
+      currentRevenue -= amount
+    }
+  })
+
+  previousOrders.forEach(order => {
+    const o = applyUIState(order)
+    if (o.cancelled) return
+
+    const amount = Number(order.total_amount)
+
+    if (o.payment_status === "complete") {
+      previousRevenue += amount
+    }
+    else if (o.payment_status === "refunded") {
+      previousRevenue -= amount
+    }
+  })
+
+  totalRevenue = currentRevenue
+
+  const refundRate = gross ? Math.round((refunds / gross) * 100) : 0
+
+  const growth = previousRevenue
+    ? Math.round(((currentRevenue - previousRevenue) / Math.abs(previousRevenue)) * 100)
+    : 0
+
+  filteredOrders.forEach(order => {
+    const o = applyUIState(order)
+    if (o.cancelled) return
+
+    let amount = Number(order.total_amount)
+
+    if (o.payment_status === "refunded") {
+      amount = -amount
+    }
+
+    if (o.payment_status !== "complete" && o.payment_status !== "refunded") {
+      return
+    }
+
+    const date = new Date(order.created_at)
+
+    // MONTH
+    const month = date.toLocaleString("en-IN", {
+      month: "short",
+      year: "2-digit"
+    })
+    monthly[month] = (monthly[month] || 0) + amount
+
+    // WEEK
+    const week = `W${Math.ceil(date.getDate() / 7)}`
+    weekly[week] = (weekly[week] || 0) + amount
+
+    // DAY
+    const day = date.toISOString().split("T")[0]
+    dailyRevenue[day] = (dailyRevenue[day] || 0) + amount
+
+    // CUSTOMER
+    const phone = order.customers?.phone
+    if (phone) {
+      repeatCustomers[phone] = (repeatCustomers[phone] || 0) + 1
+    }
+
+    // SKU
+    ;(order.order_items || []).forEach(item => {
+      skuMap[item.product_name] = (skuMap[item.product_name] || 0) + item.quantity
+    })
+  })
+
+  const avgOrder = totalOrders ? Math.round(totalRevenue / totalOrders) : 0
+  const repeatCount = Object.values(repeatCustomers).filter(c => c > 1).length
+  const repeatRate = totalOrders ? Math.round((repeatCount / totalOrders) * 100) : 0
+
+  const topSKU = Object.entries(skuMap).sort((a,b)=>b[1]-a[1])[0]
+
+  return `
+    <h3>📊 Business Analytics</h3>
+
+    <div style="display:flex;gap:6px;margin-bottom:10px;">
+      ${[7,30,180,365].map(d => `
+        <button 
+          onclick="window._ui.setAnalyticsRange(${d})"
+          style="
+            padding:6px 10px;
+            border-radius:6px;
+            border:none;
+            cursor:pointer;
+            background:${analyticsRange===d ? '#333' : '#eee'};
+            color:${analyticsRange===d ? '#fff' : '#333'};
+          ">
+          ${d}d
+        </button>
+      `).join("")}
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div class="card">
+        <div style="font-size:12px;color:#777;">Net Revenue</div>
+        <div style="font-size:18px;font-weight:600;">₹${totalRevenue}</div>
+        <div style="font-size:11px;color:#888;">
+          Gross: ₹${gross} • Refunds: ₹${refunds}
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:12px;color:#777;">Orders</div>
+        <div style="font-size:18px;font-weight:600;">${totalOrders}</div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:12px;color:#777;">Avg Order</div>
+        <div style="font-size:18px;font-weight:600;">₹${avgOrder}</div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:12px;color:#777;">Repeat Rate</div>
+        <div style="font-size:18px;font-weight:600;">${repeatRate}%</div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:12px;color:#777;">Growth</div>
+        <div style="font-size:18px;font-weight:600;color:${growth > 10 ? 'green' : growth >= 0 ? '#888' : 'red'};">
+          ${growth >= 0 ? '▲' : '▼'} ${Math.abs(growth)}%
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:12px;color:#777;">Refund %</div>
+      <div style="font-size:18px;font-weight:600;color:${
+        refundRate > 15 ? '#dc2626' : 
+        refundRate > 8 ? '#f59e0b' : 
+        '#16a34a'
+      };">
+        ${refundRate}%
+      </div>
+      <div style="font-size:11px;color:#888;">
+        ₹${refunds} refunded
+      </div>
+    </div>
+
+    <div class="card">
+      <b>🔥 Insights</b><br><br>
+      🏆 Top SKU: ${topSKU ? topSKU[0] : "-"}<br>
+      🔁 Repeat Customers: ${repeatCount}<br>
+    </div>
+
+    <div class="card"><b>Monthly Sales</b><canvas id="monthlyChart"></canvas></div>
+    <div class="card"><b>Revenue Trend</b><canvas id="revenueChart"></canvas></div>
+    <div class="card"><b>Weekly Sales</b><canvas id="weeklyChart"></canvas></div>
+    <div class="card"><b>SKU Performance</b><canvas id="skuChart"></canvas></div>
+  `
+}
+
+
+// =====================
+// CHARTS
+// =====================
+export function renderCharts() {
+  if (!window.Chart) return
+
+  const monthly = {}
+  const weekly = {}
+  const skuMap = {}
+  const dailyRevenue = {}
+
+  filteredOrders.forEach(order => {
+    const o = applyUIState(order)
+    if (o.cancelled) return
+
+    let amount = Number(order.total_amount)
+
+    if (o.payment_status === "refunded") {
+      amount = -amount
+    }
+
+    if (o.payment_status !== "complete" && o.payment_status !== "refunded") return
+
+    const date = new Date(order.created_at)
+
+    const month = date.toLocaleString("en-IN",{month:"short",year:"2-digit"})
+    monthly[month]=(monthly[month]||0)+amount
+
+    const week = `W${Math.ceil(date.getDate()/7)}`
+    weekly[week]=(weekly[week]||0)+amount
+
+    const day = date.toISOString().split("T")[0]
+    dailyRevenue[day]=(dailyRevenue[day]||0)+amount
+
+    ;(order.order_items||[]).forEach(item=>{
+      skuMap[item.product_name]=(skuMap[item.product_name]||0)+item.quantity
+    })
+  })
+
+  if (window._charts) window._charts.forEach(c=>c.destroy())
+  window._charts=[]
+
+  window._charts.push(new Chart(document.getElementById("monthlyChart"),{
+    type:"bar",
+    data:{labels:Object.keys(monthly),datasets:[{data:Object.values(monthly)}]}
+  }))
+
+  window._charts.push(new Chart(document.getElementById("revenueChart"),{
+    type:"line",
+    data:{labels:Object.keys(dailyRevenue),datasets:[{data:Object.values(dailyRevenue)}]}
+  }))
+
+  window._charts.push(new Chart(document.getElementById("weeklyChart"),{
+    type:"bar",
+    data:{labels:Object.keys(weekly),datasets:[{data:Object.values(weekly)}]}
+  }))
+
+  window._charts.push(new Chart(document.getElementById("skuChart"),{
+    type:"bar",
+    data:{labels:Object.keys(skuMap),datasets:[{data:Object.values(skuMap)}]}
+  }))
+}
+
+
+// =====================
+// CUSTOMERS
+// =====================
+export function renderCustomers() {
+  let html = "<h3>Customers</h3>"
+  const map = {}
+
+  filteredOrders.forEach(order => {
+    const o = applyUIState(order)
+    if (o.cancelled) return
+
+    const phone = order.customers?.phone
+    if (!phone) return
+
+    if (!map[phone]) {
+      map[phone] = {
+        name: order.customers?.name || "Unknown",
+        phone,
+        orders: 0,
+        spend: 0,
+        lastOrder: null
+      }
+    }
+
+    let amount = Number(order.total_amount)
+
+    if (o.payment_status === "refunded") amount = -amount
+    if (o.payment_status !== "complete" && o.payment_status !== "refunded") return
+
+    map[phone].orders++
+    map[phone].spend += amount
+
+    const d = new Date(order.created_at)
+    if (!map[phone].lastOrder || d > map[phone].lastOrder) {
+      map[phone].lastOrder = d
+    }
+  })
+
+  const sorted = Object.values(map).sort((a,b)=>b.spend-a.spend)
+
+  sorted.forEach((c,i)=>{
+    const initials=c.name.split(" ").map(w=>w[0]).join("").toUpperCase()
+    const repeat=c.orders>1?Math.round(((c.orders-1)/c.orders)*100):0
+    const last=c.lastOrder?new Date(c.lastOrder).toLocaleDateString("en-IN",{day:"numeric",month:"short"}):"-"
+    const phoneClean=c.phone.replace(/\D/g,"")
+
+    html+=`
+      <div class="customer-card ${i<3?"top":""}">
+        <div class="customer-left">
+          <div class="avatar">${initials}</div>
+          <div>
+            <h4>${c.name}</h4>
+            <p class="phone">${c.phone}</p>
+            <p class="last">Last order: ${last}</p>
+          </div>
+        </div>
+
+        <div class="customer-right">
+          <p class="spend">₹${c.spend}</p>
+          <p class="orders">${c.orders} orders • ${repeat}% repeat</p>
+          <a href="https://wa.me/91${phoneClean}" target="_blank" class="wa-btn">💬 WhatsApp</a>
+        </div>
+      </div>
+    `
+  })
+
+  return html
+}
+
+
+// =====================
+// NAVIGATION
+// =====================
+export function setAnalyticsRange(days, render) {
+  window.analyticsRange = days
+  updateFilteredOrders()
+  render()
+}
