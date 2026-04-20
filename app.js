@@ -741,7 +741,12 @@ window.toggleCancel = async function (id, current){
 // DISPATCH
 // =====================
 function renderDispatch() {
-  let html = "<h3>📦 Shipping Control</h3>"
+  let html = `
+    <div style="padding:12px;">
+      <h3 style="text-align:center; margin-bottom:16px;">
+        📦 Shipping Control
+      </h3>
+  `
 
   const ready = []
   const shipped = []
