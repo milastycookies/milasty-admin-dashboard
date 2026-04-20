@@ -236,6 +236,73 @@
       font-weight: 600;
     }
 
+
+    .customer-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    
+      padding: 14px;
+      margin-bottom: 10px;
+    
+      background: #fff;
+      border-radius: 14px;
+    
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      transition: 0.2s ease;
+    }
+    
+    .customer-card:hover {
+      transform: translateY(-2px);
+    }
+    
+    .customer-left {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+    
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    
+      font-weight: bold;
+    }
+    
+    .customer-right {
+      text-align: right;
+    }
+    
+    .spend {
+      font-size: 16px;
+      font-weight: bold;
+      color: #111;
+    }
+    
+    .orders {
+      font-size: 12px;
+      color: #777;
+    }
+    
+    .phone {
+      font-size: 12px;
+      color: #999;
+    }
+    
+    /* 🏆 Top Customers Highlight */
+    .customer-card.top {
+      border: 1px solid gold;
+      background: linear-gradient(135deg, #fff8dc, #ffffff);
+    }
+
     /* =======================
        MOBILE TWEAKS
     ======================= */
