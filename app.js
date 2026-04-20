@@ -250,7 +250,7 @@ window.handleDispatch = async function(orderId) {
   }
 
   // save tracking id
-  await fetch(`${API_BASE}/update-order`, {
+  const res = await fetch(`${API_BASE}/update-order`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -267,6 +267,11 @@ window.handleDispatch = async function(orderId) {
   await updateStatus(orderId, "delivery_status", null, "dispatched")
 
   loadOrders()
+}
+
+if (!res.ok) {
+  alert("Failed to save tracking ID")
+  return
 }
 
 
