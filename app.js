@@ -758,8 +758,11 @@ function renderDispatch() {
           style="width:100%; padding:8px; margin:6px 0; border-radius:8px; border:1px solid #ddd;"
         />
 
-        <button onclick="handleDispatch('${order.id}')">
-          🚚 Dispatch
+        <button 
+          onclick="handleDispatch('${order.id}')"
+          ${o.tracking_id ? "disabled" : ""}
+        >
+          ${o.tracking_id ? "✅ Dispatched" : "🚚 Dispatch"}
         </button>
 
         <button onclick="sendWhatsApp('${order.id}', '${phone}', '${name}')"
