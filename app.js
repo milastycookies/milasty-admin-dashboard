@@ -834,47 +834,50 @@ function renderDispatch() {
 
         <div style="
           display:flex;
-          justify-content:space-between;
-          align-items:center;
+          flex-direction:column;
+          gap:4px;
           background:#f3f4f6;
-          padding:6px 10px;
+          padding:8px 10px;
           border-radius:8px;
         ">
+        
+          <!-- Tracking -->
           <span style="font-size:12px; color:#16a34a;">
             📦 ${o.tracking_id || "N/A"}
           </span>
-
+        
+          <!-- Dispatched Date -->
           <div style="font-size:11px;color:#777;">
             Dispatched: ${
               order.dispatched_at
-                ? `<div style="font-size:11px;color:#999;">
-                     ${Math.floor((Date.now() - new Date(order.dispatched_at)) / (1000*60*60*24))} days in transit
-                   </div>`
-                : ""
+                ? new Date(order.dispatched_at).toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "short"
+                  })
+                : "-"
             }
           </div>
-
-
-          <button onclick="copyTracking('${o.tracking_id || ""}')">
-            📋 Copy
-          </button>
-          <button onclick="openTracking('${o.tracking_id}')">
-            🔗 Track
-          </button>
+        
+          <!-- Days in Transit -->
+          ${
+            order.dispatched_at
+              ? `<div style="font-size:11px;color:#999;">
+                   ${Math.floor((Date.now() - new Date(order.dispatched_at)) / (1000*60*60*24))} days in transit
+                 </div>`
+              : ""
+          }
+        
+          <!-- Buttons -->
+          <div style="display:flex; gap:6px; margin-top:4px;">
+            <button onclick="copyTracking('${o.tracking_id || ""}')">
+              📋 Copy
+            </button>
+            <button onclick="openTracking('${o.tracking_id}')">
+              🔗 Track
+            </button>
+          </div>
+        
         </div>
-
-        <div style="margin-top:10px;">
-          <button onclick="updateStatus('${order.id}', 'delivery_status', this, 'delivered')">
-            ✅ Mark Delivered
-          </button>
-
-          <button onclick="sendWhatsApp('${order.id}', '${phone}', '${name}', '${o.tracking_id}')"
-            style="background:#25D366; color:white; margin-left:6px;">
-            📲 Resend
-          </button>
-        </div>
-
-      </div>
     `
   })
 
