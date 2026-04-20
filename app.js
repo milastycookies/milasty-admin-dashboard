@@ -639,12 +639,34 @@ function renderDispatch() {
     const o = applyUIState(order)
 
     if (o.production_status === "prepared" && o.delivery_status !== "delivered") {
+
+      const phone = order.customers?.phone || ""
+      const name = order.customers?.name || "Customer"
+
       html += `
         <div class="card">
-          <h4>${order.customers?.name || "Unknown"}</h4>
-          <button onclick="updateStatus('${order.id}','delivery_status')">
-            Dispatch
+
+          <h4>${name}</h4>
+          <p>${phone}</p>
+
+          <!-- TRACKING INPUT -->
+          <input 
+            id="track-${order.id}" 
+            placeholder="Enter Tracking ID"
+            style="width:100%; padding:8px; margin:6px 0; border-radius:8px; border:1px solid #ddd;"
+          />
+
+          <!-- DISPATCH BUTTON -->
+          <button onclick="handleDispatch('${order.id}')">
+            🚚 Mark Dispatched
           </button>
+
+          <!-- WHATSAPP BUTTON -->
+          <button onclick="sendWhatsApp('${order.id}', '${phone}', '${name}')"
+            style="background:#25D366; color:white; margin-left:6px;">
+            📲 WhatsApp
+          </button>
+
         </div>
       `
     }
