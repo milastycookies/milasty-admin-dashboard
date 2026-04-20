@@ -249,13 +249,9 @@ window.handleDispatch = async function(orderId) {
     return
   }
 
-  // save tracking id
   const res = await fetch(`${API_BASE}/update-order`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${localStorage.getItem("token")}`
-    },
+    headers: { ... },
     body: JSON.stringify({
       id: orderId,
       field: "tracking_id",
@@ -263,17 +259,14 @@ window.handleDispatch = async function(orderId) {
     })
   })
 
-  // mark dispatched
-  await updateStatus(orderId, "delivery_status", null, "dispatched")
+  if (!res.ok) {
+    alert("Failed to save tracking ID")
+    return
+  }
 
+  await updateStatus(orderId, "delivery_status", null, "dispatched")
   loadOrders()
 }
-
-if (!res.ok) {
-  alert("Failed to save tracking ID")
-  return
-}
-
 
 // =====================
 // WhatsApp Auto Message
