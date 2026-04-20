@@ -1352,35 +1352,32 @@ function renderCustomers() {
 
   filteredOrders.forEach(order => {
     const o = applyUIState(order)
-  
-    // ❌ ignore cancelled
+
     if (o.cancelled) return
-  
+
     const phone = order.customers?.phone
     if (!phone) return
-  
+
     if (!map[phone]) {
       map[phone] = {
         name: order.customers?.name || "Unknown",
         phone,
         orders: 0,
         spend: 0,
-        lastOrder: null   // ✅ NEW
+        lastOrder: null
       }
     }
-  
+
     let amount = Number(order.total_amount)
-  
-    // ✅ apply refund logic
+
     if (o.payment_status === "refunded") {
       amount = -amount
     }
-  
-    // ❌ ignore pending
+
     if (o.payment_status !== "complete" && o.payment_status !== "refunded") {
       return
     }
-  
+
     map[phone].orders++
     map[phone].spend += amount
 
@@ -1398,58 +1395,51 @@ function renderCustomers() {
       .map(w => w[0])
       .join("")
       .toUpperCase()
-  
+
     const isTop = index < 3
-  
-    sortedCustomers.forEach((c, index) => {
-  const initials = c.name
-    .split(" ")
-    .map(w => w[0])
-    .join("")
-    .toUpperCase()
 
-  const isTop = index < 3
+    const repeatPercent = c.orders > 1
+      ? Math.round(((c.orders - 1) / c.orders) * 100)
+      : 0
 
-  const repeatPercent = c.orders > 1 
-    ? Math.round(((c.orders - 1) / c.orders) * 100) 
-    : 0
+    const lastDate = c.lastOrder
+      ? new Date(c.lastOrder).toLocaleDateString("en-IN", {
+          day: "numeric",
+          month: "short"
+        })
+      : "-"
 
-  const lastDate = c.lastOrder
-    ? new Date(c.lastOrder).toLocaleDateString("en-IN", {
-        day: "numeric",
-        month: "short"
-      })
-    : "-"
+    const phoneClean = c.phone.replace(/\D/g, "")
+    const whatsappLink = `https://wa.me/91${phoneClean}`
 
-  const phoneClean = c.phone.replace(/\D/g, "")
-  const whatsappLink = `https://wa.me/${phoneClean}`
-
-  html += `
-    <div class="customer-card ${isTop ? "top" : ""}">
-      
-      <div class="customer-left">
-        <div class="avatar">${initials}</div>
+    html += `
+      <div class="customer-card ${isTop ? "top" : ""}">
         
-        <div>
-          <h4>${c.name}</h4>
-          <p class="phone">${c.phone}</p>
-          <p class="last">Last order: ${lastDate}</p>
+        <div class="customer-left">
+          <div class="avatar">${initials}</div>
+          
+          <div>
+            <h4>${c.name}</h4>
+            <p class="phone">${c.phone}</p>
+            <p class="last">Last order: ${lastDate}</p>
+          </div>
         </div>
+
+        <div class="customer-right">
+          <p class="spend">₹${c.spend}</p>
+          <p class="orders">${c.orders} orders • ${repeatPercent}% repeat</p>
+
+          <a href="${whatsappLink}" target="_blank" class="wa-btn">
+            💬 WhatsApp
+          </a>
+        </div>
+
       </div>
-
-      <div class="customer-right">
-        <p class="spend">₹${c.spend}</p>
-        <p class="orders">${c.orders} orders • ${repeatPercent}% repeat</p>
-
-        <a href="${whatsappLink}" target="_blank" class="wa-btn">
-          💬 WhatsApp
-        </a>
-      </div>
-
-    </div>
-  `
-})
     `
+  })
+
+  return html
+}
 
 
 // =====================
