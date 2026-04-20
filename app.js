@@ -695,57 +695,150 @@ window.toggleCancel = async function (id, current){
 // DISPATCH
 // =====================
 function renderDispatch() {
-  let html = "<h3>Dispatch</h3>"
+  let html = "<h3>📦 Shipping Control</h3>"
+
+  const ready = []
+  const shipped = []
+  const delivered = []
 
   filteredOrders.forEach(order => {
     const o = applyUIState(order)
 
+    if (o.cancelled) return
+
     if (o.production_status === "prepared" && o.delivery_status === "pending") {
+      ready.push({ order, o })
+    }
 
-      const phone = order.customers?.phone || ""
-      const name = order.customers?.name || "Customer"
+    else if (o.delivery_status === "dispatched") {
+      shipped.push({ order, o })
+    }
 
-      html += `
-        <div class="card">
+    else if (o.delivery_status === "delivered") {
+      delivered.push({ order, o })
+    }
+  })
 
-          <h4>${name}</h4>
-          <p>${phone}</p>
+  // =====================
+  // 🟡 READY TO SHIP
+  // =====================
+  html += `<h4 style="margin-top:16px;">🟡 Ready to Ship</h4>`
 
-          <!-- TRACKING INPUT -->
-          <input 
-            id="track-${order.id}" 
-            value="${o.tracking_id || ''}"
-            ${o.tracking_id ? "disabled" : ""}
-            placeholder="Enter Tracking ID"
-            style="width:100%; padding:8px; margin:6px 0; border-radius:8px; border:1px solid #ddd;"
-          />
+  if (ready.length === 0) {
+    html += `<div class="card">No orders ready</div>`
+  }
 
-          ${o.tracking_id 
-            ? `<div style="font-size:12px;color:green; margin-top:4px;">
-                 📦 Tracking: ${o.tracking_id}
-               </div>`
-            : ""
-          }
+  ready.forEach(({ order, o }) => {
+    const phone = order.customers?.phone || ""
+    const name = order.customers?.name || "Customer"
 
-          <!-- DISPATCH BUTTON -->
-          <button onclick="handleDispatch('${order.id}')">
-            🚚 Mark Dispatched
+    html += `
+      <div class="card">
+
+        <h4>${name}</h4>
+        <p>${phone}</p>
+
+        <input 
+          id="track-${order.id}" 
+          placeholder="Enter Tracking ID"
+          style="width:100%; padding:8px; margin:6px 0; border-radius:8px; border:1px solid #ddd;"
+        />
+
+        <button onclick="handleDispatch('${order.id}')">
+          🚚 Dispatch
+        </button>
+
+        <button onclick="sendWhatsApp('${order.id}', '${phone}', '${name}')"
+          style="background:#25D366; color:white; margin-left:6px;">
+          📲 WhatsApp
+        </button>
+
+      </div>
+    `
+  })
+
+  // =====================
+  // 🚚 IN TRANSIT
+  // =====================
+  html += `<h4 style="margin-top:20px;">🚚 In Transit</h4>`
+
+  if (shipped.length === 0) {
+    html += `<div class="card">No active shipments</div>`
+  }
+
+  shipped.forEach(({ order, o }) => {
+    const phone = order.customers?.phone || ""
+    const name = order.customers?.name || "Customer"
+
+    html += `
+      <div class="card">
+
+        <h4>${name}</h4>
+        <p>${phone}</p>
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          background:#f3f4f6;
+          padding:6px 10px;
+          border-radius:8px;
+        ">
+          <span style="font-size:12px; color:#16a34a;">
+            📦 ${o.tracking_id || "N/A"}
+          </span>
+
+          <button onclick="copyTracking('${o.tracking_id || ""}')">
+            📋 Copy
+          </button>
+        </div>
+
+        <div style="margin-top:10px;">
+          <button onclick="updateStatus('${order.id}', 'delivery_status', this, 'delivered')">
+            ✅ Mark Delivered
           </button>
 
-          <!-- WHATSAPP BUTTON -->
           <button onclick="sendWhatsApp('${order.id}', '${phone}', '${name}')"
             style="background:#25D366; color:white; margin-left:6px;">
-            📲 WhatsApp
+            📲 Resend
           </button>
-
         </div>
-      `
-    }
+
+      </div>
+    `
+  })
+
+  // =====================
+  // ✅ DELIVERED
+  // =====================
+  html += `<h4 style="margin-top:20px;">✅ Delivered</h4>`
+
+  if (delivered.length === 0) {
+    html += `<div class="card">No delivered orders</div>`
+  }
+
+  delivered.forEach(({ order, o }) => {
+    const name = order.customers?.name || "Customer"
+
+    html += `
+      <div class="card" style="opacity:0.7;">
+        <h4>${name}</h4>
+
+        <div style="font-size:12px; color:green;">
+          ✅ Delivered
+        </div>
+
+        ${
+          o.tracking_id
+            ? `<div style="font-size:12px;">📦 ${o.tracking_id}</div>`
+            : ""
+        }
+      </div>
+    `
   })
 
   return html
 }
-
 // =====================
 // ANALYTICS
 // =====================
