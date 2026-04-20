@@ -367,6 +367,8 @@ window.copyTracking = function(trackingId) {
   }
 
   navigator.clipboard.writeText(trackingId)
+  .then(() => alert("Copied ✅"))
+  .catch(() => alert("Copy failed"))
 
   // simple feedback
   alert("Tracking ID copied ✅")
