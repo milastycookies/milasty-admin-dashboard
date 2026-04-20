@@ -244,6 +244,40 @@ window.updateStatus = async function (orderId, field, btn, forceValue = null) {
 }
 
 
+
+
+// =====================
+// DISPATCH + SAVE TRACKING ID
+// =====================
+window.handleDispatch = async function(orderId) {
+  const input = document.getElementById(`track-${orderId}`)
+  const trackingId = input.value.trim()
+
+  if (!trackingId) {
+    alert("Enter tracking ID first")
+    return
+  }
+
+  // save tracking id
+  await fetch(`${API_BASE}/update-order`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem("token")}`
+    },
+    body: JSON.stringify({
+      id: orderId,
+      field: "tracking_id",
+      value: trackingId
+    })
+  })
+
+  // mark dispatched
+  await updateStatus(orderId, "delivery_status", null, "dispatched")
+
+  loadOrders()
+}
+
 // =====================
 // APPLY STATE
 // =====================
