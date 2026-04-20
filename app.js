@@ -715,9 +715,17 @@ function renderDispatch() {
           <input 
             id="track-${order.id}" 
             value="${o.tracking_id || ''}"
+            ${o.tracking_id ? "disabled" : ""}
             placeholder="Enter Tracking ID"
             style="width:100%; padding:8px; margin:6px 0; border-radius:8px; border:1px solid #ddd;"
           />
+
+          ${o.tracking_id 
+            ? `<div style="font-size:12px;color:green; margin-top:4px;">
+                 📦 Tracking: ${o.tracking_id}
+               </div>`
+            : ""
+          }
 
           <!-- DISPATCH BUTTON -->
           <button onclick="handleDispatch('${order.id}')">
