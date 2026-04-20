@@ -698,7 +698,7 @@ function renderDispatch() {
   filteredOrders.forEach(order => {
     const o = applyUIState(order)
 
-    if (o.production_status === "prepared" && o.delivery_status !== "delivered") {
+    if (o.production_status === "prepared" && o.delivery_status !== "pending") {
 
       const phone = order.customers?.phone || ""
       const name = order.customers?.name || "Customer"
