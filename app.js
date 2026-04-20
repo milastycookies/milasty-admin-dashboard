@@ -66,33 +66,7 @@ export function render() {
     content = ui.renderCustomers()
   }
 
-  // =====================
-  // APP LAYOUT
-  // =====================
-  app.innerHTML = `
-    <div style="padding-bottom:70px;">
-      ${content}
-    </div>
-
-    <div style="
-      position:fixed;
-      bottom:0;
-      left:0;
-      right:0;
-      background:#fff;
-      border-top:1px solid #eee;
-      display:flex;
-      justify-content:space-around;
-      padding:6px 0;
-      z-index:100;
-    ">
-      ${navButton("production", "🍪")}
-      ${navButton("orders", "📦")}
-      ${navButton("dispatch", "🚚")}
-      ${navButton("analytics", "📊")}
-      ${navButton("customers", "👥")}
-    </div>
-  `
+ 
 
   // =====================
   // POST RENDER (Charts)
