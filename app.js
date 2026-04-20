@@ -351,6 +351,17 @@ function applyUIState(order) {
   }
 }
 
+
+// ===================
+// Open Tracking
+// ===================
+window.openTracking = function(id) {
+  if (!id) return
+  window.open(`https://shiprocket.co/tracking/${id}`, "_blank")
+}
+
+
+
 // =====================
 // PRODUCT DEFINITIONS
 // =====================
