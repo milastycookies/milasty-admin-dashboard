@@ -308,7 +308,10 @@ Thank you ❤️`
 
   const encoded = encodeURIComponent(message)
 
-  window.open(`https://wa.me/91${cleanPhone}?text=${encoded}`, "_blank")
+  const win = window.open(`https://wa.me/91${cleanPhone}?text=${encoded}`, "_blank")
+  if (!win) {
+    alert("Popup blocked. Please allow popups.")
+  }
 }
 // =====================
 // APPLY STATE
