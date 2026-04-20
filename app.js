@@ -242,6 +242,10 @@ window.updateStatus = async function (orderId, field, btn, forceValue = null) {
 // =====================
 window.handleDispatch = async function(orderId) {
   const input = document.getElementById(`track-${orderId}`)
+  if (!input) {
+    alert("Input not found")
+    return
+  }
   const trackingId = input.value.trim()
 
   if (!trackingId) {
