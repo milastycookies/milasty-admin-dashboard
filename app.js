@@ -712,6 +712,7 @@ function renderDispatch() {
           <!-- TRACKING INPUT -->
           <input 
             id="track-${order.id}" 
+            value="${order.tracking_id || ''}"
             placeholder="Enter Tracking ID"
             style="width:100%; padding:8px; margin:6px 0; border-radius:8px; border:1px solid #ddd;"
           />
