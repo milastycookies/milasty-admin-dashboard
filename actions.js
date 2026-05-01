@@ -204,17 +204,17 @@ export function sendWhatsApp(orderId, phone, name, trackingFromState = null) {
   }
 
   const cleanPhone = phone.replace(/\D/g, "")
-
+  const trackingUrl = getTrackingUrl(aggregator, trackingId)
   const message = `Hi ${name},
 
-Your MILASTY order has been shipped 🚚
-
-Tracking ID: ${trackingId}
-
-Track here:
-https://shiprocket.co/tracking/${trackingId}
-
-Thank you ❤️`
+  Your MILASTY order has been shipped 🚚
+  
+  Tracking ID: ${trackingId}
+  
+  Track here: 
+  ${trackingUrl}
+  
+  Thank you ❤️`
 
   const encoded = encodeURIComponent(message)
 
