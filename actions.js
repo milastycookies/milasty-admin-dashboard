@@ -217,9 +217,11 @@ Thank you ❤️`
 // =====================
 // TRACKING HELPERS
 // =====================
-export function openTracking(id) {
-  if (!id) return
-  window.open(`https://shiprocket.co/tracking/${id}`, "_blank")
+export function openTracking(trackingId, aggregator) {
+  if (!trackingId) return
+
+  const url = getTrackingUrl(aggregator, trackingId)
+  window.open(url, "_blank")
 }
 
 export function copyTracking(trackingId) {
