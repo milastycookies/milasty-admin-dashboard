@@ -417,7 +417,7 @@ export function renderDispatch() {
             </button>
             
             <button class="mini-btn" 
-              onclick="window._actions.openTracking('${o.tracking_id}')">
+              onclick="window._actions.openTracking('${o.tracking_id}', '${o.aggregator}')">
               🔗 Track
             </button>
           </div>
