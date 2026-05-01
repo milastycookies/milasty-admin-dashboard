@@ -123,7 +123,7 @@ export async function handleDispatch(orderId, render) {
   const aggregator = aggregatorSelect?.value
 
   if (!trackingId || !aggregator) {
-    alert("Please enter tracking ID and select courier")
+    alert("Please enter tracking ID and select courier aggregator")
     return
   }
 
