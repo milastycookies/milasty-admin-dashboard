@@ -119,12 +119,15 @@ export async function handleDispatch(orderId, render) {
   }
 
   const trackingId = input.value.trim()
+  const aggregatorSelect = document.getElementById(`agg-${orderId}`)
+  const aggregator = aggregatorSelect?.value
 
   if (!trackingId) {
     alert("Enter tracking ID first")
     return
   }
 
+  // Save tracking ID
   const res = await fetch(`${API_BASE}/update-order`, {
     method: "POST",
     headers: {
@@ -135,6 +138,17 @@ export async function handleDispatch(orderId, render) {
       id: orderId,
       field: "tracking_id",
       value: trackingId
+    })
+  })
+
+  // Save aggregator
+  await fetch(`${API_BASE}/update-order`, {
+    method: "POST",
+    headers: {...},
+    body: JSON.stringify({
+      id: orderId,
+      field: "aggregator",
+      value: aggregator
     })
   })
 
