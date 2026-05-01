@@ -122,8 +122,8 @@ export async function handleDispatch(orderId, render) {
   const aggregatorSelect = document.getElementById(`agg-${orderId}`)
   const aggregator = aggregatorSelect?.value
 
-  if (!trackingId) {
-    alert("Enter tracking ID first")
+  if (!trackingId || !aggregator) {
+    alert("Tracking ID + Courier Aggregator required")
     return
   }
 
