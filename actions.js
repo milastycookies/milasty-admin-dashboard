@@ -159,7 +159,10 @@ export async function handleDispatch(orderId, render) {
   // Save aggregator
   await fetch(`${API_BASE}/update-order`, {
     method: "POST",
-    headers: {...},
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem("token")}`
+    },
     body: JSON.stringify({
       id: orderId,
       field: "aggregator",
