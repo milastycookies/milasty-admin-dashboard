@@ -10,6 +10,21 @@ import {
   saveLocalState
 } from "./data.js"
 
+
+
+export function getTrackingUrl(aggregator, trackingId) {
+  const map = {
+    shiprocket: `https://shiprocket.co/tracking/${trackingId}`,
+    delhivery: `https://www.delhivery.com/track/package/${trackingId}`,
+    bluedart: `https://www.bluedart.com/tracking?track=${trackingId}`,
+    india_post: `https://www.indiapost.gov.in/_layouts/15/dop.portal.tracking/trackconsignment.aspx?trackingId=${trackingId}`,
+    shiprath: 'https://app.shiprath.in/tracking/${trackingId}'
+  }
+
+  return map[aggregator] || "#"
+}
+
+
 // =====================
 // UPDATE STATUS
 // =====================
