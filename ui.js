@@ -311,6 +311,14 @@ export function renderDispatch() {
 
         <input 
           id="track-${order.id}" 
+          <select id="agg-ORDER_ID">
+            <option value="">Select Courier</option>
+            <option value="shiprocket">Shiprocket</option>
+            <option value="delhivery">Delhivery</option>
+            <option value="bluedart">BlueDart</option>
+            <option value="india_post">India Post</option>
+            <option value="shiprath">Shiprath</option>
+          </select>
           value="${o.tracking_id || ''}"
           placeholder="Enter Tracking ID"
           style="width:100%; padding:8px; margin:6px 0; border-radius:8px; border:1px solid #ddd;"
