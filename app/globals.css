@@ -1,26 +1,64 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-espresso-950: #120600;
+  --color-espresso-900: #1E0D04;
+  --color-espresso-800: #2C1A0E;
+  --color-espresso-700: #3D2517;
+  --color-espresso-600: #4E3222;
+
+  --color-sand-50:  #FAF7F2;
+  --color-sand-100: #F5EFE4;
+  --color-sand-200: #EDE3D2;
+  --color-sand-300: #DDD0B8;
+  --color-sand-400: #C9B898;
+  --color-sand-500: #B5A07A;
+
+  --color-terracotta-400: #C97050;
+  --color-terracotta-500: #B05A38;
+  --color-terracotta-600: #954A2C;
+
+  --color-olive-400: #8A966A;
+  --color-olive-500: #6B7553;
+  --color-olive-600: #55603F;
+
+  --color-amber-warm: #D4862A;
+  --color-teal-muted: #4A756E;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-sand-50);
+  color: var(--color-espresso-800);
+  font-family: var(--font-geist-sans, Arial, Helvetica, sans-serif);
+}
+
+/* Thin scrollbar for sidebar */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-espresso-600);
+  border-radius: 2px;
+}
+
+/* PWA safe-area utilities for iPhone notch / home indicator */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Ensure tappable targets meet minimum 44px touch area */
+@media (max-width: 1023px) {
+  button, a {
+    -webkit-tap-highlight-color: transparent;
+  }
 }
