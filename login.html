@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MILASTY Admin Login</title>
+
+  <style>
+    body { visibility: hidden; }
+  </style>
+  
+  <style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, #f8f9fb, #eef1f5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .card {
+    background: white;
+    padding: 28px 24px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 360px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 14px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: #000;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: #000;
+    color: white;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  button:hover {
+    background: #111;
+  }
+
+  button:active {
+    transform: scale(0.98);
+  }
+
+  button:disabled {
+    background: #999;
+  }
+
+  .error {
+    color: #e11d48;
+    font-size: 13px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .loading {
+    color: #6b7280;
+    font-size: 13px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+</style>
+</head>
+
+<body>
+
+  <div class="card">
+    <h2>🍪 MILASTY Admin</h2>
+    <p style="text-align:center; font-size:13px; color:#666; margin-top:-10px; margin-bottom:15px;">
+      Internal dashboard access
+    </p>
+
+    <div id="error" class="error"></div>
+    <div id="loading" class="loading"></div>
+
+    <input id="email" type="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
+
+    <button id="loginBtn">Login</button>
+  </div>
+
+  <script>
+    const API_BASE = "https://admin-dashboard-production-2711.up.railway.app"
+
+    const errorDiv = document.getElementById("error")
+    const loadingDiv = document.getElementById("loading")
+    const btn = document.getElementById("loginBtn")
+
+    // =====================
+    // AUTO REDIRECT
+    // =====================
+    window.addEventListener("DOMContentLoaded", () => {
+      if (localStorage.getItem("token")) {
+        window.location.replace("/")
+      } else {
+        document.body.style.visibility = "visible"
+      }
+    })
+
+    // =====================
+    // LOGIN HANDLER
+    // =====================
+    btn.addEventListener("click", login)
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        login()
+      }
+    })
+
+    async function login() {
+      if (btn.disabled) return
+      const email = document.getElementById("email").value.trim()
+      const password = document.getElementById("password").value.trim()
+
+      errorDiv.innerText = ""
+      loadingDiv.innerText = ""
+
+      if (!email || !password) {
+        errorDiv.innerText = "Please enter email and password"
+        return
+      }
+
+      btn.disabled = true
+      btn.innerText = "Logging in..."
+      loadingDiv.innerText = "Authenticating..."
+
+      try {
+        const res = await fetch(`${API_BASE}/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email, password })
+        })
+
+        // If backend not reachable
+        if (!res) {
+          throw new Error("No response from server")
+        }
+
+        // Try parsing JSON safely
+        let data = {}
+        try {
+          data = await res.json()
+        } catch {
+          throw new Error("Invalid server response")
+        }
+
+        if (!res.ok || !data.access_token) {
+          errorDiv.innerText = data.error || "Invalid credentials"
+          return
+        }
+
+        // ✅ SUCCESS
+        localStorage.setItem("token", data.access_token)
+        window.location.replace("/")
+
+      } catch (err) {
+        console.error(err)
+        errorDiv.innerText = err.message || "Something went wrong"
+      } finally {
+        btn.disabled = false
+        btn.innerText = "Login"
+        loadingDiv.innerText = ""
+      }
+    }
+  </script>
+
+</body>
+</html>
