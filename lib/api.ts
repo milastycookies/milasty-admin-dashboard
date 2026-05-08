@@ -2,7 +2,10 @@ import "server-only";
 import { redirect } from "next/navigation";
 import { getAccessToken } from "./session";
 
-const BACKEND_URL = process.env.BACKEND_API_URL!;
+const BACKEND_URL = process.env.BACKEND_API_URL;
+if (!BACKEND_URL) {
+  throw new Error("BACKEND_API_URL environment variable is required but not set.");
+}
 
 /**
  * Server-side fetch helper. Attaches the current user's access token as a

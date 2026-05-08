@@ -35,7 +35,7 @@ export default function LoginPage() {
             {[
               { value: "1,284", label: "Orders" },
               { value: "892",   label: "Customers" },
-              { value: "$48k",  label: "Revenue" },
+              { value: "₹48k",  label: "Revenue" },
             ].map((s) => (
               <div key={s.label} className="bg-espresso-800 rounded-xl p-4">
                 <p className="text-sand-100 text-xl font-bold">{s.value}</p>
@@ -90,7 +90,6 @@ export default function LoginPage() {
                   type="email"
                   autoComplete="email"
                   required
-                  defaultValue="admin@milasty.com"
                   placeholder="admin@milasty.com"
                   className="w-full pl-10 pr-4 py-3 bg-white border border-sand-200 rounded-xl text-sm text-espresso-800 placeholder:text-espresso-600/40 outline-none focus:border-espresso-400 transition-colors"
                 />
@@ -114,7 +113,6 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   required
-                  defaultValue="Admin@123"
                   placeholder="••••••••"
                   className="w-full pl-10 pr-11 py-3 bg-white border border-sand-200 rounded-xl text-sm text-espresso-800 placeholder:text-espresso-600/40 outline-none focus:border-espresso-400 transition-colors"
                 />
@@ -162,7 +160,7 @@ export default function LoginPage() {
                 onChange={() => setRemember((v) => !v)}
                 className="sr-only"
               />
-              <span className="text-sm text-espresso-600/70">Remember me for 7 days</span>
+              <span className="text-sm text-espresso-600/70">Stay signed in for 30 days</span>
             </label>
 
             {/* Submit */}
@@ -189,21 +187,6 @@ export default function LoginPage() {
               )}
             </button>
           </form>
-
-          {/* Demo credentials hint */}
-          <div className="mt-6 p-4 bg-espresso-900 rounded-xl">
-            <p className="text-[10px] font-semibold text-sand-400 uppercase tracking-widest mb-2">Demo credentials</p>
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-sand-400">Email</span>
-                <span className="text-xs text-sand-200 font-mono">admin@milasty.com</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-sand-400">Password</span>
-                <span className="text-xs text-sand-200 font-mono">Admin@123</span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

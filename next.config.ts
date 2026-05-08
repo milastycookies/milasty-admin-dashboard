@@ -1,7 +1,13 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
   devIndicators: false,
+  turbopack: {
+    // Pin the workspace root to this project so Turbopack doesn't mistake
+    // a parent-directory package-lock.json for a monorepo root
+    root: path.resolve(__dirname),
+  },
   async headers() {
     return [
       {

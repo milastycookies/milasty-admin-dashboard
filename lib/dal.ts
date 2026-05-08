@@ -4,7 +4,10 @@ import { redirect } from "next/navigation";
 import { getAccessToken } from "./session";
 import type { SessionUser } from "./session";
 
-const BACKEND_URL = process.env.BACKEND_API_URL!;
+const BACKEND_URL = process.env.BACKEND_API_URL;
+if (!BACKEND_URL) {
+  throw new Error("BACKEND_API_URL environment variable is required but not set.");
+}
 
 /**
  * Verify the current session by calling the backend /auth/me endpoint.

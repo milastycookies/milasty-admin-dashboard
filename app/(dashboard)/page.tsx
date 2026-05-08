@@ -92,7 +92,7 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <PageHeader title="Dashboard" subtitle={`Welcome back, ${name} · May 7, 2026`} />
+      <PageHeader title="Dashboard" subtitle={`Welcome back, ${name} · ${new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}`} />
       <main className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
         {/* Stat cards */}
         <section>

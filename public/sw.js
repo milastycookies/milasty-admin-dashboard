@@ -1,12 +1,10 @@
-const CACHE = "milasty-v1";
+// Cache version — bump this string on every deploy to invalidate stale caches
+const CACHE = "milasty-v2";
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(
-    caches
-      .open(CACHE)
-      .then((c) => c.addAll(["/login"]))
-      .then(() => self.skipWaiting())
-  );
+  // Pre-cache only the offline fallback shell; skip the login page so it
+  // never serves a stale auth page after a deploy
+  e.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener("activate", (e) => {
@@ -28,16 +26,17 @@ self.addEventListener("fetch", (e) => {
   if (url.pathname.startsWith("/api/")) return;
   if (url.pathname.startsWith("/_next/")) return;
 
+  // Network-first: always try the network; fall back to cache only when offline.
+  // Stale data is dangerous in an admin dashboard — always serve fresh content.
   e.respondWith(
-    caches.match(e.request).then((cached) => {
-      const network = fetch(e.request).then((res) => {
+    fetch(e.request)
+      .then((res) => {
         if (res && res.status === 200 && res.type === "basic") {
           const clone = res.clone();
           caches.open(CACHE).then((c) => c.put(e.request, clone));
         }
         return res;
-      });
-      return cached || network;
-    })
+      })
+      .catch(() => caches.match(e.request))
   );
 });
